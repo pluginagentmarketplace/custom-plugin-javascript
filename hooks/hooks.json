@@ -1,0 +1,170 @@
+{
+  "hooks": {
+    "enabled": true,
+    "version": "1.0.0",
+    "description": "Automation hooks for JavaScript learning plugin",
+    "hooks_list": [
+      {
+        "id": "on-agent-invoke",
+        "name": "Agent Invocation Hook",
+        "description": "Tracks which agent user invokes for learning analytics",
+        "trigger": "agent_invoked",
+        "actions": [
+          {
+            "type": "log",
+            "message": "User invoked {agent_name}"
+          },
+          {
+            "type": "update_progress",
+            "field": "last_agent_visited",
+            "value": "{agent_id}"
+          }
+        ]
+      },
+      {
+        "id": "on-skill-requested",
+        "name": "Skill Access Hook",
+        "description": "Records when user requests a specific skill",
+        "trigger": "skill_requested",
+        "actions": [
+          {
+            "type": "log",
+            "message": "User requested skill: {skill_name}"
+          }
+        ]
+      },
+      {
+        "id": "on-command-execute",
+        "name": "Command Execution Hook",
+        "description": "Tracks slash command usage",
+        "trigger": "command_executed",
+        "conditions": [
+          {
+            "command": "learn"
+          },
+          {
+            "command": "browse-agent"
+          },
+          {
+            "command": "assess"
+          },
+          {
+            "command": "projects"
+          }
+        ],
+        "actions": [
+          {
+            "type": "log",
+            "message": "Command executed: /{command}"
+          }
+        ]
+      },
+      {
+        "id": "learning-progress-tracker",
+        "name": "Learning Progress Tracker",
+        "description": "Tracks progression through learning paths",
+        "trigger": "agent_completed",
+        "actions": [
+          {
+            "type": "update_progress",
+            "field": "completed_agents",
+            "value": "increment"
+          },
+          {
+            "type": "log",
+            "message": "User completed: {agent_name}"
+          }
+        ]
+      },
+      {
+        "id": "project-tracking",
+        "name": "Project Completion Hook",
+        "description": "Records completed projects",
+        "trigger": "project_completed",
+        "actions": [
+          {
+            "type": "log",
+            "message": "Project completed: {project_name}"
+          },
+          {
+            "type": "update_progress",
+            "field": "completed_projects",
+            "value": "increment"
+          }
+        ]
+      },
+      {
+        "id": "assessment-recorder",
+        "name": "Assessment Results Recorder",
+        "description": "Records assessment scores and recommendations",
+        "trigger": "assessment_completed",
+        "actions": [
+          {
+            "type": "log",
+            "message": "Assessment completed - Level: {level}"
+          },
+          {
+            "type": "update_progress",
+            "field": "current_level",
+            "value": "{level}"
+          }
+        ]
+      }
+    ]
+  },
+  "analytics": {
+    "enabled": true,
+    "track": [
+      "agent_invoked",
+      "skill_requested",
+      "command_executed",
+      "learning_path_started",
+      "learning_path_completed",
+      "project_started",
+      "project_completed",
+      "assessment_taken"
+    ]
+  },
+  "notifications": {
+    "enabled": true,
+    "milestone_achievements": [
+      {
+        "name": "First Agent Completed",
+        "trigger": "agent_completed",
+        "count": 1,
+        "message": "🎉 Great start! You've completed your first agent. Keep going!"
+      },
+      {
+        "name": "Halfway Through Learning Path",
+        "trigger": "agents_completed",
+        "count": 3,
+        "message": "🚀 You're already halfway through the learning path! Momentum is key."
+      },
+      {
+        "name": "All Agents Mastered",
+        "trigger": "agents_completed",
+        "count": 7,
+        "message": "🏆 Amazing! You've mastered all 7 JavaScript agents. You're a JavaScript developer!"
+      },
+      {
+        "name": "First Project Completed",
+        "trigger": "project_completed",
+        "count": 1,
+        "message": "✨ First project done! Real-world application is the best teacher."
+      },
+      {
+        "name": "5 Projects Milestone",
+        "trigger": "projects_completed",
+        "count": 5,
+        "message": "💪 5 projects completed! Your portfolio is growing strong."
+      }
+    ]
+  },
+  "user_preferences": {
+    "learningSpeed": "flexible",
+    "notificationPreference": "milestones",
+    "trackProgress": true,
+    "shareAnalytics": false,
+    "recommendationsEnabled": true
+  }
+}
