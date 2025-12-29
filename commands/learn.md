@@ -1,3 +1,9 @@
+---
+name: learn
+description: Start Your JavaScript Journey
+allowed-tools: Read
+---
+
 # /learn - Start Your JavaScript Journey
 
 Welcome to the comprehensive JavaScript learning plugin! This command helps you select your learning path and get started with structured, agent-guided learning.

@@ -1,3 +1,9 @@
+---
+name: browse-agent
+description: agent - Explore All 7 JavaScript Agents
+allowed-tools: Read
+---
+
 # /browse-agent - Explore All 7 JavaScript Agents
 
 Discover our comprehensive network of 7 specialized agents, each designed to guide you through specific JavaScript domains.

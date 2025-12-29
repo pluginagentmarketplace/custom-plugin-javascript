@@ -1,3 +1,9 @@
+---
+name: projects
+description: Browse Hands-On JavaScript Projects
+allowed-tools: Read
+---
+
 # /projects - Browse Hands-On JavaScript Projects
 
 Apply your learning with real-world projects. This command provides curated projects for every skill level and learning phase.

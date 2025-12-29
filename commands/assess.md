@@ -1,3 +1,9 @@
+---
+name: assess
+description: Evaluate Your JavaScript Knowledge
+allowed-tools: Read
+---
+
 # /assess - Evaluate Your JavaScript Knowledge
 
 Use this command to assess your current JavaScript level and get personalized recommendations for your learning journey.
