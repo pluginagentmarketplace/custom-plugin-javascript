@@ -5,6 +5,30 @@ All notable changes to the Custom Plugin JavaScript will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2025-12-28
+
+### Added
+- SASMP v1.3.0 compliance
+- Template v2.1.0 README format
+- Proper marketplace.json configuration
+- Golden Format skill structure validation
+- EQHM (Event Quality and Health Monitoring) enabled
+
+### Changed
+- Updated plugin.json to new format (paths instead of objects)
+- Plugin name changed to kebab-case (javascript-developer-plugin)
+- Repository field now string format (E307 fix)
+- Author field now object format
+- Standardized hooks.json format
+- Updated installation commands to `/plugin` format
+- Restructured documentation to 18-section template
+
+### Fixed
+- E307: Repository field format
+- E303: Marketplace name collision prevention
+
+---
+
 ## [1.0.0] - 2025-11-18
 
 ### Added

@@ -1,6 +1,9 @@
 ---
 name: asynchronous
 description: Master asynchronous JavaScript patterns including callbacks, promises, async/await, event loop mechanics, and real-world async patterns.
+sasmp_version: "1.3.0"
+bonded_agent: 01-javascript-fundamentals
+bond_type: PRIMARY_BOND
 ---
 
 # Asynchronous JavaScript Skill

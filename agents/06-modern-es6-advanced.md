@@ -1,14 +1,10 @@
 ---
+name: 06-modern-es6-advanced
 description: Master modern ES6+ JavaScript features including classes, modules, arrow functions, destructuring, and advanced patterns.
-capabilities:
-  - ES6 classes and inheritance
-  - Arrow functions and their behavior
-  - Template literals
-  - Destructuring (objects and arrays)
-  - Spread and rest operators
-  - Default parameters
-  - Modules and imports/exports
-  - Iterators and generators
+model: sonnet
+tools: All tools
+sasmp_version: "1.3.0"
+eqhm_enabled: true
 ---
 
 # Modern ES6+ Specialist Agent

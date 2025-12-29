@@ -1,0 +1,24 @@
+{
+  "name": "pluginagentmarketplace-javascript",
+  "owner": {
+    "name": "Dr. Umit Kacar & Muhsin Elcicek",
+    "email": "kacarumit.phd@gmail.com",
+    "url": "https://github.com/pluginagentmarketplace"
+  },
+  "plugins": [
+    {
+      "name": "javascript-developer-plugin",
+      "source": "./",
+      "description": "Comprehensive JavaScript learning plugin with 7 specialized agents and 7 skills",
+      "version": "2.0.0",
+      "keywords": ["javascript", "es6", "async", "dom", "web-development"],
+      "author": {
+        "name": "Dr. Umit Kacar & Muhsin Elcicek",
+        "email": "kacarumit.phd@gmail.com",
+        "url": "https://github.com/pluginagentmarketplace"
+      },
+      "repository": "https://github.com/pluginagentmarketplace/custom-plugin-javascript",
+      "homepage": "https://github.com/pluginagentmarketplace/custom-plugin-javascript"
+    }
+  ]
+}

@@ -1,6 +1,9 @@
 ---
 name: ecosystem
 description: Master JavaScript ecosystem including npm, build tools (Webpack, Vite), testing (Jest), linting, Git workflow, and framework integration.
+sasmp_version: "1.3.0"
+bonded_agent: 01-javascript-fundamentals
+bond_type: PRIMARY_BOND
 ---
 
 # JavaScript Ecosystem Skill

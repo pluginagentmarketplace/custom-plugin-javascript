@@ -1,6 +1,9 @@
 ---
 name: functions
 description: Advanced function patterns including declaration styles, closures, scope chains, hoisting, and this binding. Master function composition and advanced techniques.
+sasmp_version: "1.3.0"
+bonded_agent: 01-javascript-fundamentals
+bond_type: PRIMARY_BOND
 ---
 
 # Functions & Scope Skill

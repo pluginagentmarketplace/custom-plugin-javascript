@@ -1,0 +1,259 @@
+# DOM Selectors Reference
+# Complete guide to selecting elements in the DOM
+
+# Selector Methods
+selector_methods:
+  getElementById:
+    syntax: "document.getElementById('id')"
+    returns: "Element | null"
+    performance: "O(1) - Hash lookup"
+    example: |
+      const header = document.getElementById('main-header');
+    notes:
+      - "Fastest selector method"
+      - "Returns single element"
+      - "ID must be unique in document"
+
+  getElementsByClassName:
+    syntax: "element.getElementsByClassName('class')"
+    returns: "HTMLCollection (live)"
+    performance: "O(n)"
+    example: |
+      const buttons = document.getElementsByClassName('btn');
+      // Live collection - updates automatically
+    notes:
+      - "Returns live HTMLCollection"
+      - "Can chain: element.getElementsByClassName()"
+      - "Space-separated for multiple classes"
+
+  getElementsByTagName:
+    syntax: "element.getElementsByTagName('tag')"
+    returns: "HTMLCollection (live)"
+    performance: "O(n)"
+    example: |
+      const paragraphs = document.getElementsByTagName('p');
+      const allElements = document.getElementsByTagName('*');
+
+  querySelector:
+    syntax: "element.querySelector('selector')"
+    returns: "Element | null"
+    performance: "O(n) - CSS selector matching"
+    example: |
+      const el = document.querySelector('.container > .item:first-child');
+      const input = document.querySelector('input[type="email"]');
+    notes:
+      - "Uses CSS selector syntax"
+      - "Returns first match only"
+      - "More flexible than getElement* methods"
+
+  querySelectorAll:
+    syntax: "element.querySelectorAll('selector')"
+    returns: "NodeList (static)"
+    performance: "O(n)"
+    example: |
+      const items = document.querySelectorAll('.list-item');
+      // Static snapshot - doesn't update
+      items.forEach(item => item.classList.add('processed'));
+    notes:
+      - "Returns static NodeList"
+      - "Supports forEach (unlike HTMLCollection)"
+      - "Snapshot at time of query"
+
+  closest:
+    syntax: "element.closest('selector')"
+    returns: "Element | null"
+    performance: "O(depth)"
+    example: |
+      // Find nearest ancestor matching selector
+      const form = button.closest('form');
+      const container = element.closest('.container');
+    notes:
+      - "Searches up the DOM tree"
+      - "Includes the element itself"
+      - "Great for event delegation"
+
+  matches:
+    syntax: "element.matches('selector')"
+    returns: "boolean"
+    example: |
+      if (element.matches('.active')) {
+        // Element has 'active' class
+      }
+
+# CSS Selector Patterns
+css_selectors:
+  basic:
+    - pattern: "*"
+      description: "Universal - all elements"
+    - pattern: "tag"
+      description: "Element by tag name"
+    - pattern: ".class"
+      description: "Element by class"
+    - pattern: "#id"
+      description: "Element by ID"
+
+  combinators:
+    - pattern: "A B"
+      description: "Descendant (any level)"
+      example: "div p"
+    - pattern: "A > B"
+      description: "Direct child only"
+      example: "ul > li"
+    - pattern: "A + B"
+      description: "Adjacent sibling"
+      example: "h1 + p"
+    - pattern: "A ~ B"
+      description: "General sibling"
+      example: "h1 ~ p"
+
+  attributes:
+    - pattern: "[attr]"
+      description: "Has attribute"
+      example: "[disabled]"
+    - pattern: "[attr=value]"
+      description: "Exact match"
+      example: "[type='text']"
+    - pattern: "[attr^=value]"
+      description: "Starts with"
+      example: "[href^='https']"
+    - pattern: "[attr$=value]"
+      description: "Ends with"
+      example: "[src$='.png']"
+    - pattern: "[attr*=value]"
+      description: "Contains"
+      example: "[class*='btn']"
+    - pattern: "[attr~=value]"
+      description: "Word in space-separated list"
+      example: "[class~='active']"
+
+  pseudo_classes:
+    structural:
+      - pattern: ":first-child"
+        example: "li:first-child"
+      - pattern: ":last-child"
+        example: "li:last-child"
+      - pattern: ":nth-child(n)"
+        example: "tr:nth-child(odd)"
+      - pattern: ":nth-of-type(n)"
+        example: "p:nth-of-type(2)"
+      - pattern: ":only-child"
+        example: "div:only-child"
+      - pattern: ":empty"
+        example: "div:empty"
+
+    state:
+      - pattern: ":hover"
+        example: "a:hover"
+      - pattern: ":focus"
+        example: "input:focus"
+      - pattern: ":active"
+        example: "button:active"
+      - pattern: ":checked"
+        example: "input:checked"
+      - pattern: ":disabled"
+        example: "input:disabled"
+      - pattern: ":valid/:invalid"
+        example: "input:invalid"
+
+    negation:
+      - pattern: ":not(selector)"
+        example: "input:not([type='submit'])"
+      - pattern: ":has(selector)"
+        example: "div:has(> img)"
+        note: "Modern browsers only"
+
+  pseudo_elements:
+    - pattern: "::before"
+      description: "Insert before content"
+    - pattern: "::after"
+      description: "Insert after content"
+    - pattern: "::first-line"
+      description: "First line of text"
+    - pattern: "::first-letter"
+      description: "First letter"
+    - pattern: "::placeholder"
+      description: "Input placeholder"
+    - pattern: "::selection"
+      description: "Selected text"
+
+# DOM Traversal
+traversal:
+  parent:
+    parentNode: "Any parent (including document)"
+    parentElement: "Parent element only"
+
+  children:
+    children: "HTMLCollection of child elements"
+    childNodes: "NodeList including text nodes"
+    firstChild: "First child node (any type)"
+    firstElementChild: "First child element"
+    lastChild: "Last child node"
+    lastElementChild: "Last child element"
+
+  siblings:
+    previousSibling: "Previous node"
+    previousElementSibling: "Previous element"
+    nextSibling: "Next node"
+    nextElementSibling: "Next element"
+
+# Performance Tips
+performance:
+  - tip: "Use getElementById when possible"
+    reason: "O(1) hash lookup"
+
+  - tip: "Cache selectors in variables"
+    bad: |
+      // Querying multiple times
+      document.querySelector('.item').style.color = 'red';
+      document.querySelector('.item').style.background = 'blue';
+    good: |
+      // Cache the reference
+      const item = document.querySelector('.item');
+      item.style.color = 'red';
+      item.style.background = 'blue';
+
+  - tip: "Use specific selectors"
+    bad: "document.querySelectorAll('*')"
+    good: "document.querySelectorAll('.specific-class')"
+
+  - tip: "Prefer querySelector over complex getElement chains"
+    bad: |
+      document.getElementById('container')
+        .getElementsByClassName('list')[0]
+        .getElementsByTagName('li');
+    good: |
+      document.querySelectorAll('#container .list li');
+
+  - tip: "Be aware of live vs static collections"
+    note: |
+      HTMLCollection (live) - updates as DOM changes
+      NodeList from querySelectorAll (static) - snapshot
+
+# Common Patterns
+patterns:
+  event_delegation:
+    description: "Handle events on parent for dynamic children"
+    example: |
+      document.getElementById('list').addEventListener('click', (e) => {
+        if (e.target.matches('.item')) {
+          handleItemClick(e.target);
+        }
+      });
+
+  find_in_scope:
+    description: "Query within specific element"
+    example: |
+      const form = document.getElementById('my-form');
+      const inputs = form.querySelectorAll('input');
+
+  walking_dom:
+    description: "Traverse DOM tree"
+    example: |
+      function walkDOM(node, callback) {
+        callback(node);
+        node = node.firstElementChild;
+        while (node) {
+          walkDOM(node, callback);
+          node = node.nextElementSibling;
+        }
+      }

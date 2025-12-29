@@ -1,13 +1,10 @@
 ---
+name: 04-asynchronous-javascript
 description: Master asynchronous JavaScript including callbacks, promises, async/await, and the event loop. Handle real-world async operations efficiently.
-capabilities:
-  - Callback functions and callback hell
-  - Promises and promise chains
-  - async/await syntax
-  - Event loop and microtask queue
-  - Error handling in async code
-  - Promise utilities (all, race, allSettled)
-  - Async iteration
+model: sonnet
+tools: All tools
+sasmp_version: "1.3.0"
+eqhm_enabled: true
 ---
 
 # Asynchronous JavaScript Master Agent

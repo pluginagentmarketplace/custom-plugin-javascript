@@ -1,0 +1,271 @@
+# JavaScript Function Patterns Reference
+# Comprehensive guide to function declaration styles and patterns
+
+# Function Declaration Styles
+declaration_styles:
+  function_declaration:
+    syntax: "function name(params) { body }"
+    hoisted: true
+    has_this: true
+    has_arguments: true
+    can_be_constructor: true
+    example: |
+      function greet(name) {
+        return `Hello, ${name}!`;
+      }
+    use_cases:
+      - "Named functions that need to be hoisted"
+      - "Recursive functions"
+      - "Methods with their own 'this'"
+
+  function_expression:
+    syntax: "const name = function(params) { body };"
+    hoisted: false
+    has_this: true
+    has_arguments: true
+    can_be_constructor: true
+    example: |
+      const greet = function(name) {
+        return `Hello, ${name}!`;
+      };
+    use_cases:
+      - "Conditional function definition"
+      - "Callback functions"
+      - "When hoisting is not desired"
+
+  arrow_function:
+    syntax: "const name = (params) => expression"
+    hoisted: false
+    has_this: false  # Inherits from enclosing scope
+    has_arguments: false
+    can_be_constructor: false
+    example: |
+      const greet = (name) => `Hello, ${name}!`;
+      const add = (a, b) => a + b;
+    use_cases:
+      - "Short callbacks"
+      - "Array methods (map, filter, reduce)"
+      - "When you need 'this' from outer scope"
+
+  method_shorthand:
+    syntax: "{ methodName(params) { body } }"
+    hoisted: false
+    has_this: true
+    has_arguments: true
+    example: |
+      const obj = {
+        greet(name) {
+          return `Hello, ${name}!`;
+        }
+      };
+    use_cases:
+      - "Object methods"
+      - "Class methods"
+
+# Scope Types
+scope_types:
+  global:
+    description: "Accessible everywhere"
+    declaration: "var outside functions, or without keyword"
+    risk: "Pollution, naming conflicts"
+    example: |
+      const globalVar = "accessible everywhere";
+
+  function:
+    description: "Accessible within function and nested functions"
+    declaration: "var inside function"
+    risk: "Hoisting confusion with var"
+    example: |
+      function outer() {
+        var functionScoped = "only here";
+      }
+
+  block:
+    description: "Accessible within { } block only"
+    declaration: "let, const inside block"
+    risk: "Temporal Dead Zone (TDZ)"
+    example: |
+      if (true) {
+        let blockScoped = "only in this block";
+      }
+
+  module:
+    description: "Accessible within module file"
+    declaration: "Top-level variables in ES modules"
+    risk: "None (isolated by default)"
+    example: |
+      // module.js
+      const moduleVar = "not global";
+      export { moduleVar };
+
+# Closure Patterns
+closure_patterns:
+  private_state:
+    description: "Encapsulate private variables"
+    example: |
+      function createCounter() {
+        let count = 0;
+        return {
+          increment() { return ++count; },
+          decrement() { return --count; },
+          getCount() { return count; }
+        };
+      }
+    use_cases:
+      - "Data hiding"
+      - "State management"
+      - "Factory functions"
+
+  function_factory:
+    description: "Create specialized functions"
+    example: |
+      function multiply(x) {
+        return function(y) {
+          return x * y;
+        };
+      }
+      const double = multiply(2);
+      const triple = multiply(3);
+    use_cases:
+      - "Partial application"
+      - "Configuration"
+      - "Currying"
+
+  memoization:
+    description: "Cache expensive computations"
+    example: |
+      function memoize(fn) {
+        const cache = new Map();
+        return function(...args) {
+          const key = JSON.stringify(args);
+          if (!cache.has(key)) {
+            cache.set(key, fn(...args));
+          }
+          return cache.get(key);
+        };
+      }
+    use_cases:
+      - "Expensive calculations"
+      - "Recursive functions"
+      - "API caching"
+
+  module_pattern:
+    description: "IIFE with private scope"
+    example: |
+      const myModule = (function() {
+        const private = "secret";
+        return {
+          getPrivate() { return private; }
+        };
+      })();
+    use_cases:
+      - "Legacy module encapsulation"
+      - "Singleton pattern"
+
+# This Binding Rules
+this_binding:
+  default:
+    description: "Window (browser) or undefined (strict mode)"
+    example: "function fn() { console.log(this); }"
+
+  implicit:
+    description: "Object before dot on method call"
+    example: "obj.method() // this = obj"
+
+  explicit:
+    description: "Manually set with call/apply/bind"
+    methods:
+      call: "fn.call(thisArg, arg1, arg2)"
+      apply: "fn.apply(thisArg, [arg1, arg2])"
+      bind: "const bound = fn.bind(thisArg)"
+
+  new:
+    description: "Newly created object in constructor"
+    example: "new Constructor() // this = new object"
+
+  arrow:
+    description: "Inherited from enclosing scope"
+    example: "const fn = () => this; // this from outer scope"
+
+# Advanced Patterns
+advanced_patterns:
+  currying:
+    description: "Transform f(a, b, c) to f(a)(b)(c)"
+    example: |
+      const curry = (fn) =>
+        (...args) =>
+          args.length >= fn.length
+            ? fn(...args)
+            : (...more) => curry(fn)(...args, ...more);
+
+  composition:
+    description: "Combine functions: f(g(x))"
+    example: |
+      const compose = (...fns) =>
+        (x) => fns.reduceRight((acc, fn) => fn(acc), x);
+
+      const pipe = (...fns) =>
+        (x) => fns.reduce((acc, fn) => fn(acc), x);
+
+  partial_application:
+    description: "Pre-fill some arguments"
+    example: |
+      const partial = (fn, ...presetArgs) =>
+        (...laterArgs) => fn(...presetArgs, ...laterArgs);
+
+  debounce:
+    description: "Delay execution until pause in calls"
+    example: |
+      const debounce = (fn, delay) => {
+        let timeoutId;
+        return (...args) => {
+          clearTimeout(timeoutId);
+          timeoutId = setTimeout(() => fn(...args), delay);
+        };
+      };
+
+  throttle:
+    description: "Limit execution frequency"
+    example: |
+      const throttle = (fn, limit) => {
+        let inThrottle;
+        return (...args) => {
+          if (!inThrottle) {
+            fn(...args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+          }
+        };
+      };
+
+# Best Practices
+best_practices:
+  - rule: "Use arrow functions for callbacks"
+    reason: "Shorter syntax, lexical this"
+
+  - rule: "Use function declarations for hoisting needs"
+    reason: "Available before declaration"
+
+  - rule: "Avoid var, use const/let"
+    reason: "Block scoping prevents bugs"
+
+  - rule: "Keep functions small and focused"
+    reason: "Single responsibility principle"
+
+  - rule: "Use default parameters"
+    reason: "Cleaner than || fallbacks"
+
+  - rule: "Prefer pure functions"
+    reason: "Easier to test and reason about"
+
+# ESLint Rules for Functions
+eslint_config:
+  rules:
+    arrow-body-style: ["error", "as-needed"]
+    arrow-parens: ["error", "as-needed"]
+    prefer-arrow-callback: "error"
+    no-loop-func: "error"
+    prefer-rest-params: "error"
+    prefer-spread: "error"
+    no-unused-vars: "error"
+    no-param-reassign: "warn"

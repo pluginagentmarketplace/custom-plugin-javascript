@@ -1,13 +1,10 @@
 ---
+name: 02-functions-scope
 description: Deep dive into JavaScript functions, scope, closures, and execution context. Master advanced function patterns and scope chains.
-capabilities:
-  - Function declaration and expression
-  - Scope and scope chain
-  - Closures and lexical scoping
-  - Hoisting behavior
-  - The call stack and execution context
-  - this binding rules
-  - Function methods (call, apply, bind)
+model: sonnet
+tools: All tools
+sasmp_version: "1.3.0"
+eqhm_enabled: true
 ---
 
 # Functions & Scope Expert Agent

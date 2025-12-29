@@ -1,0 +1,144 @@
+# JavaScript Variables Template
+# Use this template for consistent variable declarations
+
+# Project Configuration
+project:
+  name: my-javascript-project
+  version: "1.0.0"
+  author: ""
+
+# Variable Naming Conventions
+naming_conventions:
+  # camelCase for regular variables
+  regular_variables:
+    pattern: "^[a-z][a-zA-Z0-9]*$"
+    examples:
+      - userName
+      - isActive
+      - totalCount
+      - maxRetries
+
+  # UPPER_SNAKE_CASE for constants
+  constants:
+    pattern: "^[A-Z][A-Z0-9_]*$"
+    examples:
+      - MAX_RETRIES
+      - API_BASE_URL
+      - DEFAULT_TIMEOUT
+      - CACHE_TTL
+
+  # PascalCase for classes and constructors
+  classes:
+    pattern: "^[A-Z][a-zA-Z0-9]*$"
+    examples:
+      - UserService
+      - DataValidator
+      - EventEmitter
+
+  # _prefix for private/internal
+  private_variables:
+    pattern: "^_[a-z][a-zA-Z0-9]*$"
+    examples:
+      - _internalCache
+      - _privateMethod
+      - _hiddenState
+
+# Declaration Types
+declaration_rules:
+  const:
+    description: "Use for values that never change"
+    scope: "block"
+    hoisting: false
+    tdz: true
+    examples:
+      - "const PI = 3.14159;"
+      - "const CONFIG = Object.freeze({ api: 'url' });"
+      - "const users = []; // Array reference is constant"
+
+  let:
+    description: "Use for values that will be reassigned"
+    scope: "block"
+    hoisting: false
+    tdz: true
+    examples:
+      - "let count = 0;"
+      - "let isLoading = true;"
+      - "let currentPage = 1;"
+
+  var:
+    description: "AVOID - Legacy declaration with function scope"
+    scope: "function"
+    hoisting: true
+    tdz: false
+    deprecated: true
+    migration_guide: "Replace with const or let based on reassignment needs"
+
+# Type Definitions
+type_templates:
+  primitive:
+    string: "const name = '';"
+    number: "const count = 0;"
+    boolean: "const isActive = false;"
+    null: "const empty = null;"
+    undefined: "let pending;"
+    symbol: "const id = Symbol('unique');"
+    bigint: "const large = 100n;"
+
+  reference:
+    object: "const config = {};"
+    array: "const items = [];"
+    function: "const handler = () => {};"
+    date: "const now = new Date();"
+    regexp: "const pattern = /regex/;"
+    map: "const cache = new Map();"
+    set: "const unique = new Set();"
+
+# Best Practices Checklist
+best_practices:
+  - rule: "Prefer const over let"
+    reason: "Immutability prevents bugs"
+
+  - rule: "Never use var in modern code"
+    reason: "Block scoping is safer"
+
+  - rule: "Declare variables at the top of their scope"
+    reason: "Improves readability"
+
+  - rule: "Use descriptive names"
+    reason: "Self-documenting code"
+
+  - rule: "Group related declarations"
+    reason: "Logical organization"
+
+# ESLint Rules
+eslint_config:
+  rules:
+    prefer-const: "error"
+    no-var: "error"
+    no-unused-vars: "warn"
+    no-undef: "error"
+    camelcase: "warn"
+    no-shadow: "error"
+    no-use-before-define: "error"
+
+# Example File Template
+file_template: |
+  /**
+   * @file ${filename}
+   * @description ${description}
+   * @author ${author}
+   * @version ${version}
+   */
+
+  // Constants (immutable values)
+  const CONFIG = Object.freeze({
+    API_URL: process.env.API_URL || 'http://localhost:3000',
+    TIMEOUT: 5000,
+    MAX_RETRIES: 3
+  });
+
+  // Module-level variables
+  let instanceCount = 0;
+
+  // Exports
+  export { CONFIG };

@@ -1,6 +1,9 @@
 ---
 name: data-structures
 description: Master JavaScript objects and arrays including manipulation methods, prototypal inheritance, and complex data structure patterns.
+sasmp_version: "1.3.0"
+bonded_agent: 01-javascript-fundamentals
+bond_type: PRIMARY_BOND
 ---
 
 # Data Structures Skill

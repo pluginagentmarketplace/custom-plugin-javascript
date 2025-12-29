@@ -1,6 +1,9 @@
 ---
 name: fundamentals
 description: Core JavaScript fundamentals including variables, data types, operators, control flow, and basic syntax. Essential foundation for all JavaScript development.
+sasmp_version: "1.3.0"
+bonded_agent: 01-javascript-fundamentals
+bond_type: PRIMARY_BOND
 ---
 
 # JavaScript Fundamentals Skill

@@ -1,13 +1,10 @@
 ---
+name: 05-dom-browser-apis
 description: Master DOM manipulation and browser APIs. Learn to interact with the DOM, handle events, and use modern Web APIs.
-capabilities:
-  - DOM selection and manipulation
-  - Event handling and delegation
-  - DOM traversal
-  - Attribute and style manipulation
-  - Web APIs (Fetch, LocalStorage, Geolocation)
-  - Window and Document objects
-  - Browser events
+model: sonnet
+tools: All tools
+sasmp_version: "1.3.0"
+eqhm_enabled: true
 ---
 
 # DOM & Browser APIs Guide Agent

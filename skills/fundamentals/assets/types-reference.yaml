@@ -1,0 +1,261 @@
+# JavaScript Data Types Reference
+# Complete type system overview for JavaScript
+
+# Primitive Types (7 types)
+primitive_types:
+  string:
+    typeof_result: "string"
+    falsy_values: ['""', "''", '``']
+    truthy_examples: ["'hello'", '"world"']
+    methods:
+      - charAt
+      - substring
+      - slice
+      - split
+      - toLowerCase
+      - toUpperCase
+      - trim
+      - includes
+      - indexOf
+      - replace
+      - match
+    template_literal: true
+    immutable: true
+    examples:
+      - "'Hello, World!'"
+      - '`Template ${var}`'
+      - '"Unicode: \\u0041"'
+
+  number:
+    typeof_result: "number"
+    falsy_values: [0, -0, NaN]
+    special_values:
+      - Infinity
+      - -Infinity
+      - NaN
+    max_safe_integer: 9007199254740991
+    min_safe_integer: -9007199254740991
+    methods:
+      - toFixed
+      - toPrecision
+      - toString
+      - valueOf
+    static_methods:
+      - Number.isNaN
+      - Number.isFinite
+      - Number.isInteger
+      - Number.parseInt
+      - Number.parseFloat
+    examples:
+      - "42"
+      - "3.14159"
+      - "1e10"
+      - "0xFF"
+      - "0b1010"
+      - "0o17"
+
+  boolean:
+    typeof_result: "boolean"
+    values: [true, false]
+    falsy_coercion:
+      - false
+      - 0
+      - '""'
+      - null
+      - undefined
+      - NaN
+    truthy_coercion: "Everything else"
+    examples:
+      - "true"
+      - "false"
+      - "Boolean(1)"
+      - "!!value"
+
+  null:
+    typeof_result: "object"  # Historical bug in JavaScript
+    is_primitive: true
+    represents: "Intentional absence of value"
+    comparison:
+      - "null === null  // true"
+      - "null == undefined  // true"
+      - "null === undefined  // false"
+    examples:
+      - "const empty = null;"
+      - "user.address = null;"
+
+  undefined:
+    typeof_result: "undefined"
+    occurs_when:
+      - "Variable declared but not assigned"
+      - "Missing function parameter"
+      - "Missing object property"
+      - "Function with no return value"
+    examples:
+      - "let x;  // undefined"
+      - "const obj = {}; obj.missing  // undefined"
+      - "function fn() {}; fn()  // undefined"
+
+  symbol:
+    typeof_result: "symbol"
+    introduced: "ES6"
+    unique: true
+    use_cases:
+      - "Object property keys (prevents collision)"
+      - "Private-like properties"
+      - "Well-known symbols (Symbol.iterator)"
+    well_known_symbols:
+      - Symbol.iterator
+      - Symbol.toStringTag
+      - Symbol.toPrimitive
+      - Symbol.asyncIterator
+    examples:
+      - "const id = Symbol('id');"
+      - "const obj = { [Symbol('key')]: 'value' };"
+
+  bigint:
+    typeof_result: "bigint"
+    introduced: "ES2020"
+    suffix: "n"
+    max_value: "Arbitrary precision"
+    operations:
+      - "Cannot mix with Number in arithmetic"
+      - "Division truncates toward zero"
+    examples:
+      - "const big = 9007199254740992n;"
+      - "10n + 20n  // 30n"
+
+# Reference Types
+reference_types:
+  object:
+    typeof_result: "object"
+    subtypes:
+      - Plain Object
+      - Array
+      - Date
+      - RegExp
+      - Map
+      - Set
+      - WeakMap
+      - WeakSet
+      - Error
+    creation:
+      literal: "const obj = {};"
+      constructor: "const obj = new Object();"
+      create: "const obj = Object.create(null);"
+    properties:
+      - "Mutable by default"
+      - "Passed by reference"
+      - "Can have getters/setters"
+
+  function:
+    typeof_result: "function"
+    types:
+      declaration: "function name() {}"
+      expression: "const fn = function() {};"
+      arrow: "const fn = () => {};"
+      generator: "function* gen() {}"
+      async: "async function fn() {}"
+    properties:
+      - name
+      - length
+      - prototype
+      - arguments
+    is_object: true
+    callable: true
+
+  array:
+    typeof_result: "object"
+    instanceof: "Array"
+    check: "Array.isArray(arr)"
+    methods:
+      mutating:
+        - push
+        - pop
+        - shift
+        - unshift
+        - splice
+        - sort
+        - reverse
+        - fill
+      non_mutating:
+        - concat
+        - slice
+        - map
+        - filter
+        - reduce
+        - find
+        - findIndex
+        - includes
+        - every
+        - some
+    examples:
+      - "[1, 2, 3]"
+      - "new Array(5)"
+      - "Array.from('hello')"
+
+# Type Checking Methods
+type_checking:
+  typeof:
+    syntax: "typeof value"
+    returns: "string"
+    limitations:
+      - "null returns 'object'"
+      - "Arrays return 'object'"
+      - "All objects return 'object'"
+    examples:
+      - "typeof 'hello'  // 'string'"
+      - "typeof 42  // 'number'"
+      - "typeof null  // 'object' (bug)"
+
+  instanceof:
+    syntax: "value instanceof Constructor"
+    returns: "boolean"
+    checks: "Prototype chain"
+    examples:
+      - "[] instanceof Array  // true"
+      - "{} instanceof Object  // true"
+
+  Array.isArray:
+    syntax: "Array.isArray(value)"
+    returns: "boolean"
+    recommended: true
+    examples:
+      - "Array.isArray([])  // true"
+      - "Array.isArray({})  // false"
+
+  Object.prototype.toString:
+    syntax: "Object.prototype.toString.call(value)"
+    returns: "[object Type]"
+    most_reliable: true
+    examples:
+      - "toString.call([])  // '[object Array]'"
+      - "toString.call(null)  // '[object Null]'"
+
+# Type Coercion Rules
+coercion:
+  to_string:
+    null: "'null'"
+    undefined: "'undefined'"
+    true: "'true'"
+    false: "'false'"
+    number: "String representation"
+    object: "obj.toString() or obj.valueOf()"
+
+  to_number:
+    null: 0
+    undefined: NaN
+    true: 1
+    false: 0
+    string: "Parse or NaN"
+    object: "valueOf() then toString()"
+
+  to_boolean:
+    falsy:
+      - false
+      - 0
+      - -0
+      - '""'
+      - null
+      - undefined
+      - NaN
+    truthy: "Everything else (including {} and [])"

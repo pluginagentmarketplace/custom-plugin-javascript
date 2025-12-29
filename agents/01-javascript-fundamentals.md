@@ -1,12 +1,10 @@
 ---
+name: 01-javascript-fundamentals
 description: Master core JavaScript basics including variables, data types, operators, and control flow. Essential foundation for all JavaScript development.
-capabilities:
-  - Variables and data types
-  - Operators and expressions
-  - Control flow statements
-  - Syntax and conventions
-  - Type coercion
-  - Basic debugging
+model: sonnet
+tools: All tools
+sasmp_version: "1.3.0"
+eqhm_enabled: true
 ---
 
 # JavaScript Fundamentals Agent

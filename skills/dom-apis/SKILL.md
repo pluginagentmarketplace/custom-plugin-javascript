@@ -1,6 +1,9 @@
 ---
 name: dom-apis
 description: Master DOM manipulation and browser APIs. Learn element selection, event handling, DOM traversal, and Web APIs like Fetch, LocalStorage, and more.
+sasmp_version: "1.3.0"
+bonded_agent: 01-javascript-fundamentals
+bond_type: PRIMARY_BOND
 ---
 
 # DOM & Browser APIs Skill

@@ -1,9 +1,14 @@
 {
-  "name": "custom-plugin-javascript",
-  "displayName": "JavaScript Developer Roadmap",
-  "version": "1.0.0",
+  "name": "javascript-developer-plugin",
+  "version": "2.0.0",
   "description": "Comprehensive JavaScript learning plugin with 7 specialized agents, 7 skills, and 4 slash commands. Complete learning path from fundamentals to advanced ecosystem.",
-  "author": "Claude Code",
+  "author": {
+    "name": "Dr. Umit Kacar & Muhsin Elcicek",
+    "email": "kacarumit.phd@gmail.com",
+    "url": "https://github.com/pluginagentmarketplace"
+  },
+  "homepage": "https://github.com/pluginagentmarketplace/custom-plugin-javascript",
+  "repository": "https://github.com/pluginagentmarketplace/custom-plugin-javascript",
   "license": "MIT",
   "keywords": [
     "javascript",
@@ -11,137 +16,35 @@
     "roadmap",
     "web-development",
     "programming",
-    "fundamentals",
     "es6",
     "async",
     "dom",
-    "ecosystem"
+    "claude-code",
+    "plugin"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/pluginagentmarketplace/custom-plugin-javascript"
-  },
   "agents": [
-    {
-      "id": "js-fundamentals",
-      "name": "JavaScript Fundamentals",
-      "file": "agents/01-javascript-fundamentals.md",
-      "description": "Core JavaScript basics: variables, data types, operators, control flow, and syntax"
-    },
-    {
-      "id": "functions-scope",
-      "name": "Functions & Scope Expert",
-      "file": "agents/02-functions-scope.md",
-      "description": "Functions, scope, closures, hoisting, and execution context"
-    },
-    {
-      "id": "objects-arrays",
-      "name": "Objects & Arrays Specialist",
-      "file": "agents/03-objects-arrays.md",
-      "description": "Objects, arrays, prototypal inheritance, and data structures"
-    },
-    {
-      "id": "async-javascript",
-      "name": "Asynchronous JavaScript Master",
-      "file": "agents/04-asynchronous-javascript.md",
-      "description": "Callbacks, Promises, async/await, event loop, and concurrency"
-    },
-    {
-      "id": "dom-apis",
-      "name": "DOM & Browser APIs Guide",
-      "file": "agents/05-dom-browser-apis.md",
-      "description": "DOM manipulation, events, Web APIs, and browser interactions"
-    },
-    {
-      "id": "modern-es6",
-      "name": "Modern ES6+ Specialist",
-      "file": "agents/06-modern-es6-advanced.md",
-      "description": "Classes, modules, destructuring, spread operator, and advanced features"
-    },
-    {
-      "id": "ecosystem-tools",
-      "name": "JavaScript Ecosystem Expert",
-      "file": "agents/07-javascript-ecosystem.md",
-      "description": "Package managers, build tools, testing frameworks, and ecosystem"
-    }
-  ],
-  "commands": [
-    {
-      "id": "learn",
-      "name": "learn",
-      "file": "commands/learn.md",
-      "description": "Start a guided JavaScript learning path"
-    },
-    {
-      "id": "browse-agent",
-      "name": "browse-agent",
-      "file": "commands/browse-agent.md",
-      "description": "Explore all 7 JavaScript learning agents"
-    },
-    {
-      "id": "assess",
-      "name": "assess",
-      "file": "commands/assess.md",
-      "description": "Assess your JavaScript knowledge level"
-    },
-    {
-      "id": "projects",
-      "name": "projects",
-      "file": "commands/projects.md",
-      "description": "Browse hands-on JavaScript projects"
-    }
+    "./agents/01-javascript-fundamentals.md",
+    "./agents/02-functions-scope.md",
+    "./agents/03-objects-arrays.md",
+    "./agents/04-asynchronous-javascript.md",
+    "./agents/05-dom-browser-apis.md",
+    "./agents/06-modern-es6-advanced.md",
+    "./agents/07-javascript-ecosystem.md"
   ],
   "skills": [
-    {
-      "id": "js-fundamentals-skill",
-      "name": "fundamentals",
-      "file": "skills/fundamentals/SKILL.md",
-      "description": "Core JavaScript fundamentals and basics"
-    },
-    {
-      "id": "functions-skill",
-      "name": "functions",
-      "file": "skills/functions/SKILL.md",
-      "description": "Advanced function patterns and scope management"
-    },
-    {
-      "id": "data-structures-skill",
-      "name": "data-structures",
-      "file": "skills/data-structures/SKILL.md",
-      "description": "Objects, arrays, and data structure patterns"
-    },
-    {
-      "id": "async-skill",
-      "name": "asynchronous",
-      "file": "skills/asynchronous/SKILL.md",
-      "description": "Asynchronous programming and concurrency"
-    },
-    {
-      "id": "dom-skill",
-      "name": "dom-apis",
-      "file": "skills/dom-apis/SKILL.md",
-      "description": "DOM manipulation and browser APIs"
-    },
-    {
-      "id": "modern-skill",
-      "name": "modern-javascript",
-      "file": "skills/modern-javascript/SKILL.md",
-      "description": "Modern ES6+ features and advanced patterns"
-    },
-    {
-      "id": "ecosystem-skill",
-      "name": "ecosystem",
-      "file": "skills/ecosystem/SKILL.md",
-      "description": "JavaScript ecosystem, tools, and frameworks"
-    }
+    "./skills/asynchronous/SKILL.md",
+    "./skills/data-structures/SKILL.md",
+    "./skills/dom-apis/SKILL.md",
+    "./skills/ecosystem/SKILL.md",
+    "./skills/functions/SKILL.md",
+    "./skills/fundamentals/SKILL.md",
+    "./skills/modern-javascript/SKILL.md"
   ],
-  "hooks": {
-    "enabled": true,
-    "file": "hooks/hooks.json"
-  },
-  "documentation": {
-    "readme": "README.md",
-    "learning_path": "LEARNING-PATH.md",
-    "architecture": "ARCHITECTURE.md"
-  }
+  "commands": [
+    "./commands/assess.md",
+    "./commands/browse-agent.md",
+    "./commands/learn.md",
+    "./commands/projects.md"
+  ],
+  "hooks": "./hooks/hooks.json"
 }

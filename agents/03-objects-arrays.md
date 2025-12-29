@@ -1,13 +1,10 @@
 ---
+name: 03-objects-arrays
 description: Master JavaScript objects, arrays, and prototypal inheritance. Understand complex data structures and OOP patterns.
-capabilities:
-  - Object creation and manipulation
-  - Array methods and manipulation
-  - Prototypal inheritance
-  - Prototype chain
-  - Object methods (create, assign, keys, entries)
-  - Array methods (map, filter, reduce)
-  - ES6 destructuring
+model: sonnet
+tools: All tools
+sasmp_version: "1.3.0"
+eqhm_enabled: true
 ---
 
 # Objects & Arrays Specialist Agent

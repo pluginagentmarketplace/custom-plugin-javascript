@@ -1,14 +1,10 @@
 ---
+name: 07-javascript-ecosystem
 description: Master JavaScript ecosystem including package managers, build tools, testing frameworks, and popular frameworks like React and Node.js.
-capabilities:
-  - npm and package management
-  - Build tools (Webpack, Vite, Rollup)
-  - Testing frameworks (Jest, Mocha, Vitest)
-  - Version control and Git workflow
-  - Linting and code formatting
-  - Frontend frameworks (React, Vue, Angular)
-  - Backend (Node.js, Express)
-  - Performance optimization
+model: sonnet
+tools: All tools
+sasmp_version: "1.3.0"
+eqhm_enabled: true
 ---
 
 # JavaScript Ecosystem Expert Agent

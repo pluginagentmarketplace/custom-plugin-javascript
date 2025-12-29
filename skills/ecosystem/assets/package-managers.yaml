@@ -1,0 +1,99 @@
+# JavaScript Package Managers Reference
+# npm, yarn, pnpm comparison
+
+package_managers:
+  npm:
+    description: "Node Package Manager - Default for Node.js"
+    config_file: "package.json"
+    lock_file: "package-lock.json"
+    commands:
+      install: "npm install"
+      add: "npm install <package>"
+      add_dev: "npm install -D <package>"
+      remove: "npm uninstall <package>"
+      update: "npm update"
+      run: "npm run <script>"
+      init: "npm init -y"
+      publish: "npm publish"
+      audit: "npm audit"
+      outdated: "npm outdated"
+
+  yarn:
+    description: "Fast, reliable package manager by Facebook"
+    config_file: "package.json"
+    lock_file: "yarn.lock"
+    commands:
+      install: "yarn"
+      add: "yarn add <package>"
+      add_dev: "yarn add -D <package>"
+      remove: "yarn remove <package>"
+      update: "yarn upgrade"
+      run: "yarn <script>"
+      init: "yarn init -y"
+      publish: "yarn publish"
+
+  pnpm:
+    description: "Fast, disk space efficient package manager"
+    config_file: "package.json"
+    lock_file: "pnpm-lock.yaml"
+    advantages:
+      - "Saves disk space with symlinks"
+      - "Faster than npm/yarn"
+      - "Strict dependency resolution"
+    commands:
+      install: "pnpm install"
+      add: "pnpm add <package>"
+      add_dev: "pnpm add -D <package>"
+      remove: "pnpm remove <package>"
+
+# Build Tools
+build_tools:
+  vite:
+    description: "Next generation frontend build tool"
+    use_for: "Modern web apps, Vue, React, Svelte"
+    config: "vite.config.js"
+
+  webpack:
+    description: "Module bundler for JavaScript applications"
+    use_for: "Complex apps, legacy support"
+    config: "webpack.config.js"
+
+  esbuild:
+    description: "Extremely fast JavaScript bundler"
+    use_for: "Fast builds, libraries"
+
+  rollup:
+    description: "Module bundler for libraries"
+    use_for: "npm packages, tree-shaking"
+
+# Testing Frameworks
+testing:
+  jest:
+    description: "JavaScript testing framework by Facebook"
+    features: ["Snapshots", "Mocking", "Coverage"]
+
+  vitest:
+    description: "Vite-native testing framework"
+    features: ["Fast", "ESM support", "Jest compatible"]
+
+  mocha:
+    description: "Flexible testing framework"
+    pair_with: "chai, sinon"
+
+  playwright:
+    description: "E2E testing for web apps"
+    browsers: ["Chromium", "Firefox", "WebKit"]
+
+# Linting & Formatting
+quality_tools:
+  eslint:
+    description: "JavaScript linter"
+    config: ".eslintrc.js"
+
+  prettier:
+    description: "Code formatter"
+    config: ".prettierrc"
+
+  typescript:
+    description: "Typed JavaScript"
+    config: "tsconfig.json"

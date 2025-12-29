@@ -1,6 +1,9 @@
 ---
 name: modern-javascript
 description: Master modern ES6+ JavaScript features including classes, arrow functions, destructuring, modules, iterators, and advanced patterns.
+sasmp_version: "1.3.0"
+bonded_agent: 01-javascript-fundamentals
+bond_type: PRIMARY_BOND
 ---
 
 # Modern JavaScript Skill
