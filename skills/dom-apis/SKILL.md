@@ -1,436 +1,220 @@
 ---
 name: dom-apis
-description: Master DOM manipulation and browser APIs. Learn element selection, event handling, DOM traversal, and Web APIs like Fetch, LocalStorage, and more.
+description: DOM manipulation and browser APIs including element selection, events, storage, fetch, and modern Web APIs.
 sasmp_version: "1.3.0"
-bonded_agent: 01-javascript-fundamentals
+bonded_agent: 05-dom-browser-apis
 bond_type: PRIMARY_BOND
+
+# Production-Grade Configuration
+skill_type: reference
+response_format: code_first
+max_tokens: 1500
+
+parameter_validation:
+  required: [topic]
+  optional: [api_type]
+
+retry_logic:
+  on_ambiguity: ask_clarification
+  fallback: show_common_apis
+
+observability:
+  entry_log: "DOM APIs skill activated"
+  exit_log: "DOM reference provided"
 ---
 
 # DOM & Browser APIs Skill
 
-## Quick Start
+## Quick Reference Card
 
-The DOM is how JavaScript interacts with HTML. Master element selection and manipulation:
-
+### Element Selection
 ```javascript
-// Select elements
-const elem = document.getElementById("myId");
-const elems = document.querySelectorAll(".class-name");
+// Modern (preferred)
+document.querySelector('#id');
+document.querySelector('.class');
+document.querySelectorAll('div.item');
 
-// Manipulate content
-elem.textContent = "New text";
-elem.innerHTML = "<strong>HTML</strong>";
+// Scoped
+container.querySelector('.child');
 
-// Modify attributes
-elem.setAttribute("data-id", "123");
-elem.setAttribute("class", "active");
+// Cache references
+const els = {
+  form: document.querySelector('#form'),
+  input: document.querySelector('#input'),
+  btn: document.querySelector('#btn')
+};
+```
 
-// Add event listener
-elem.addEventListener("click", () => {
-  console.log("Clicked!");
+### DOM Manipulation
+```javascript
+// Safe text (XSS-safe)
+el.textContent = userInput;
+
+// Create elements (safest)
+const div = document.createElement('div');
+div.className = 'card';
+div.textContent = title;
+parent.appendChild(div);
+
+// Batch updates (performance)
+const fragment = document.createDocumentFragment();
+items.forEach(item => {
+  const li = document.createElement('li');
+  li.textContent = item;
+  fragment.appendChild(li);
 });
+list.appendChild(fragment);
 ```
 
-## DOM Selection
-
+### Event Handling
 ```javascript
-// Single elements
-document.getElementById("myId");           // By ID
-document.querySelector(".class-name");      // By selector
-document.querySelector("div > p");          // Complex selector
-
-// Multiple elements
-document.getElementsByClassName("className"); // HTMLCollection
-document.querySelectorAll(".class-name");   // NodeList
-document.querySelectorAll("div.item");      // Complex selector
-
-// Accessing lists
-const items = document.querySelectorAll(".item");
-items[0];           // First item
-items.length;       // Number of items
-items.forEach(item => {  // Iterate items
-  console.log(item);
-});
-```
-
-## Manipulating Elements
-
-```javascript
-const elem = document.querySelector("#myElement");
-
-// Text and HTML content
-elem.textContent = "Plain text only";
-elem.innerText = "Rendered text";  // Respects styling
-elem.innerHTML = "<strong>HTML content</strong>";
-
-// Attributes
-elem.setAttribute("data-value", "123");
-elem.getAttribute("data-value");        // "123"
-elem.removeAttribute("data-value");
-elem.hasAttribute("data-value");        // false
-
-// Classes
-elem.classList.add("active");
-elem.classList.remove("active");
-elem.classList.toggle("active");
-elem.classList.contains("active");      // boolean
-
-// Properties
-elem.id = "newId";
-elem.title = "Tooltip";
-elem.disabled = true;  // For form elements
-```
-
-## Creating and Removing Elements
-
-```javascript
-// Create elements
-const newDiv = document.createElement("div");
-const newPara = document.createElement("p");
-
-newPara.textContent = "Hello, World!";
-newDiv.appendChild(newPara);
-document.body.appendChild(newDiv);
-
-// Remove elements
-elem.remove();
-elem.parentElement.removeChild(elem);
-
-// Clone elements
-const clone = elem.cloneNode(true);     // Deep clone (with children)
-const shallow = elem.cloneNode(false);  // Shallow clone (no children)
-document.body.appendChild(clone);
-```
-
-## DOM Traversal
-
-```javascript
-const elem = document.querySelector(".myClass");
-
-// Parent navigation
-elem.parentElement;      // Direct parent
-elem.parentNode;         // Parent node
-elem.parentElement?.parentElement;  // Grandparent
-
-// Child navigation
-elem.children;           // HTMLCollection of element children
-elem.childNodes;         // NodeList of all children
-elem.firstChild;         // First child node
-elem.lastChild;          // Last child node
-elem.firstElementChild;  // First element child
-elem.lastElementChild;   // Last element child
-
-// Sibling navigation
-elem.nextElementSibling;    // Next element sibling
-elem.previousElementSibling;  // Previous element sibling
-elem.nextSibling;           // Next node (text, comment, etc)
-elem.previousSibling;       // Previous node
-
-// Find closest ancestor
-elem.closest(".container");  // Find closest ancestor matching selector
-```
-
-## Style Manipulation
-
-```javascript
-const elem = document.querySelector("#myElement");
-
-// Inline styles
-elem.style.color = "red";
-elem.style.backgroundColor = "blue";
-elem.style.padding = "10px";
-elem.style.display = "none";
-
-// Get computed styles
-const computedStyle = window.getComputedStyle(elem);
-computedStyle.color;              // "#ff0000" (computed value)
-computedStyle.display;            // "block"
-computedStyle.getPropertyValue("padding");
-
-// CSS classes (preferred approach)
-elem.classList.add("highlight");
-elem.classList.toggle("active");
-
-// Inline style as string
-elem.setAttribute("style", "color: red; background: blue;");
-```
-
-## Event Handling
-
-### Adding Event Listeners
-
-```javascript
-const button = document.querySelector("#myButton");
-
-// Basic event listener
-function handleClick(event) {
-  console.log("Button clicked!");
-  console.log(event.target);  // Element that triggered event
-  console.log(event.type);    // "click"
-}
-
-button.addEventListener("click", handleClick);
-button.removeEventListener("click", handleClick);
-
-// Anonymous function
-button.addEventListener("click", (event) => {
-  console.log("Clicked!");
-  event.preventDefault();  // Prevent default behavior
-  event.stopPropagation(); // Stop bubbling
+// Event delegation (best practice)
+list.addEventListener('click', (e) => {
+  if (e.target.matches('.delete')) {
+    e.target.closest('li').remove();
+  }
 });
 
 // Options
-button.addEventListener("click", handleClick, {
-  once: true,       // Only fire once, then remove
-  capture: false,   // Bubbling phase (default)
-  passive: true     // Won't call preventDefault
+el.addEventListener('click', handler, {
+  once: true,      // Remove after first call
+  passive: true,   // Never preventDefault
+  capture: false   // Bubbling phase
 });
+
+// Cleanup with AbortController
+const controller = new AbortController();
+el.addEventListener('click', handler, { signal: controller.signal });
+controller.abort(); // Remove listener
 ```
 
-### Common Events
-
+### Storage APIs
 ```javascript
-// Mouse events
-elem.addEventListener("click", handler);
-elem.addEventListener("dblclick", handler);
-elem.addEventListener("mousedown", handler);
-elem.addEventListener("mouseup", handler);
-elem.addEventListener("mouseover", handler);
-elem.addEventListener("mouseout", handler);
-elem.addEventListener("mousemove", handler);
+// LocalStorage (persistent)
+localStorage.setItem('key', JSON.stringify(data));
+const data = JSON.parse(localStorage.getItem('key'));
 
-// Keyboard events
-elem.addEventListener("keydown", (e) => {
-  console.log(e.key);      // "a", "Enter", "ArrowUp"
-  console.log(e.code);     // "KeyA", "Enter", "ArrowUp"
-  console.log(e.shiftKey); // true if shift held
-});
-elem.addEventListener("keyup", handler);
-elem.addEventListener("keypress", handler);  // Deprecated
+// SessionStorage (tab-only)
+sessionStorage.setItem('token', value);
 
-// Form events
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-  // Get form data
-  const formData = new FormData(form);
-  const data = Object.fromEntries(formData);
-});
-
-input.addEventListener("change", handler);  // When focus lost
-input.addEventListener("input", handler);   // As user types
-input.addEventListener("focus", handler);
-input.addEventListener("blur", handler);
-
-// Window events
-window.addEventListener("load", handler);    // Page loaded
-window.addEventListener("resize", handler);  // Window resized
-window.addEventListener("scroll", handler);  // Page scrolled
-window.addEventListener("beforeunload", (e) => {
-  e.preventDefault();
-  e.returnValue = "Are you sure?";
-});
+// Safe wrapper
+const storage = {
+  get: (k, def = null) => {
+    try { return JSON.parse(localStorage.getItem(k)) ?? def; }
+    catch { return def; }
+  },
+  set: (k, v) => localStorage.setItem(k, JSON.stringify(v))
+};
 ```
-
-### Event Delegation
-
-```javascript
-// Instead of adding listener to each item
-const list = document.querySelector("#myList");
-
-list.addEventListener("click", (event) => {
-  if (event.target.tagName === "LI") {
-    console.log("Clicked:", event.target.textContent);
-    event.target.classList.toggle("active");
-  }
-});
-
-// Dynamically added items automatically have the listener
-const newItem = document.createElement("li");
-newItem.textContent = "New item";
-list.appendChild(newItem);  // Click listener already works!
-```
-
-## Browser APIs
 
 ### Fetch API
-
 ```javascript
-// GET request
-fetch("/api/users")
-  .then(response => {
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    return response.json();
-  })
-  .then(data => console.log(data))
-  .catch(error => console.error(error));
+// GET
+const res = await fetch('/api/data');
+const data = await res.json();
 
-// POST request
-fetch("/api/users", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({ name: "Alice", email: "alice@example.com" })
-})
-  .then(response => response.json())
-  .then(data => console.log(data));
+// POST
+await fetch('/api/data', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(data)
+});
 
-// With async/await
-async function getUsers() {
-  const response = await fetch("/api/users");
-  const data = await response.json();
-  return data;
+// With error handling
+async function fetchJSON(url) {
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
 }
 ```
 
-### LocalStorage
-
+### Modern Web APIs
 ```javascript
-// Save data (string only)
-localStorage.setItem("username", "alice");
-localStorage.setItem("settings", JSON.stringify({
-  theme: "dark",
-  language: "en"
-}));
+// Intersection Observer (lazy loading)
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.src = e.target.dataset.src;
+      observer.unobserve(e.target);
+    }
+  });
+});
+document.querySelectorAll('img[data-src]').forEach(img => {
+  observer.observe(img);
+});
 
-// Retrieve data
-const username = localStorage.getItem("username");
-const settings = JSON.parse(localStorage.getItem("settings"));
+// Clipboard
+await navigator.clipboard.writeText(text);
 
-// Remove data
-localStorage.removeItem("username");
-localStorage.clear();  // Remove all
-
-// Check existence
-if (localStorage.getItem("username")) {
-  console.log("User is saved");
-}
-```
-
-### Geolocation API
-
-```javascript
+// Geolocation
 navigator.geolocation.getCurrentPosition(
-  (position) => {
-    const latitude = position.coords.latitude;
-    const longitude = position.coords.longitude;
-    const accuracy = position.coords.accuracy;
-    console.log(`Location: ${latitude}, ${longitude}`);
-  },
-  (error) => {
-    console.error("Error:", error.message);
-  },
-  {
-    timeout: 5000,
-    enableHighAccuracy: true
-  }
+  pos => console.log(pos.coords),
+  err => console.error(err)
 );
-
-// Watch position
-const watchId = navigator.geolocation.watchPosition(
-  (position) => { /* handle updates */ },
-  (error) => { /* handle error */ }
-);
-
-// Stop watching
-navigator.geolocation.clearWatch(watchId);
 ```
 
-### Window Object
+## Troubleshooting
 
+### Common Issues
+
+| Problem | Symptom | Fix |
+|---------|---------|-----|
+| Element not found | `null` returned | Check if DOM loaded |
+| Event not firing | Handler not called | Verify selector/delegation |
+| XSS vulnerability | Script execution | Use `textContent` |
+| Memory leak | Growing memory | Remove listeners |
+
+### Debug Checklist
 ```javascript
-// Navigation
-window.location.href = "/new-page";
-window.location.pathname;   // "/page"
-window.location.search;     // "?id=1"
-window.history.back();
-window.history.forward();
+// 1. Verify element exists
+const el = document.querySelector('#id');
+console.assert(el, 'Element not found');
 
-// Dimensions
-window.innerWidth;
-window.innerHeight;
-window.outerWidth;
-window.outerHeight;
-window.scrollX;
-window.scrollY;
+// 2. Check event target
+el.addEventListener('click', (e) => {
+  console.log('target:', e.target);
+  console.log('currentTarget:', e.currentTarget);
+});
 
-// Timing
-setTimeout(() => console.log("After 1 second"), 1000);
-setInterval(() => console.log("Every 2 seconds"), 2000);
-requestAnimationFrame(callback);  // Optimized animation
-
-// Information
-navigator.userAgent;
-navigator.language;
-
-// Dialogs
-alert("Message");
-const confirmed = confirm("Are you sure?");
-const input = prompt("Enter your name:");
+// 3. Monitor DOM changes
+new MutationObserver(console.log)
+  .observe(el, { childList: true, subtree: true });
 ```
 
-## Common Patterns
+## Production Patterns
 
 ### Form Handling
-
 ```javascript
-const form = document.querySelector("#myForm");
-
-form.addEventListener("submit", async (e) => {
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
-
-  const formData = new FormData(form);
-  const data = Object.fromEntries(formData);
+  const data = Object.fromEntries(new FormData(form));
 
   try {
-    const response = await fetch("/api/submit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    });
-
-    if (response.ok) {
-      console.log("Form submitted successfully");
-      form.reset();
-    }
-  } catch (error) {
-    console.error("Error:", error);
+    btn.disabled = true;
+    await submitData(data);
+    form.reset();
+  } catch (err) {
+    showError(err.message);
+  } finally {
+    btn.disabled = false;
   }
 });
 ```
 
-### Element Visibility Toggle
-
+### Debounced Input
 ```javascript
-const toggle = document.querySelector("#toggle");
-const content = document.querySelector("#content");
+const debouncedSearch = debounce(async (query) => {
+  const results = await search(query);
+  renderResults(results);
+}, 300);
 
-toggle.addEventListener("click", () => {
-  content.style.display = content.style.display === "none" ? "block" : "none";
-  // Or use classList
-  content.classList.toggle("hidden");
+input.addEventListener('input', (e) => {
+  debouncedSearch(e.target.value);
 });
 ```
 
-## Practice Exercises
+## Related
 
-1. Select elements and modify their content
-2. Create event listeners for user interactions
-3. Dynamically create and add elements to the DOM
-4. Fetch data from an API and display it
-5. Save and retrieve data from LocalStorage
-6. Use event delegation for dynamic lists
-
-## Resources
-
-- MDN: DOM API
-- MDN: Event API
-- MDN: Fetch API
-- MDN: Storage API
-
-## Next Steps
-
-- Build interactive web pages
-- Master event handling patterns
-- Learn DOM performance optimization
-- Integrate with frameworks like React
+- **Agent 05**: DOM & Browser APIs (detailed learning)
+- **Skill: asynchronous**: Fetch and promises
+- **Skill: ecosystem**: Framework alternatives

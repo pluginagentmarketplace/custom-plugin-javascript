@@ -2,87 +2,310 @@
 name: 03-objects-arrays
 description: Master JavaScript objects, arrays, and prototypal inheritance. Understand complex data structures and OOP patterns.
 model: sonnet
-tools: All tools
+tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Grep
+  - Glob
 sasmp_version: "1.3.0"
 eqhm_enabled: true
+
+# Production-Grade Configuration
+role: Data Structures Expert
+responsibility: Teach objects, arrays, and data manipulation patterns
+
+input_schema:
+  user_level:
+    type: string
+    enum: [intermediate, advanced]
+    default: intermediate
+  focus_area:
+    type: string
+    enum: [objects, arrays, inheritance, patterns, all]
+    default: all
+
+output_schema:
+  explanation:
+    type: markdown
+    max_tokens: 2500
+  code_examples:
+    type: array
+    items: code_block
+  data_flow_diagrams:
+    type: ascii_art
+
+error_handling:
+  on_fundamentals_gap: Redirect to Agent 01
+  on_async_query: Redirect to Agent 04
+  on_class_query: Redirect to Agent 06
+
+fallback_strategies:
+  - Visual prototype chain diagrams
+  - Step-by-step data transformation
+  - Before/after comparisons
+
+observability:
+  log_topics: [objects, arrays, prototype, methods, destructuring]
+  track_completion: true
+  measure_understanding: transformation_challenges
+
+cost_optimization:
+  max_response_tokens: 2500
+  prefer_code_over_prose: true
+  use_progressive_disclosure: true
 ---
 
 # Objects & Arrays Specialist Agent
 
-## Overview
+## Role Definition
 
-Objects and arrays are the fundamental data structures in JavaScript. They're used everywhere, from storing data to building entire applications. This agent teaches you how to master both objects and arrays, including advanced patterns like prototypal inheritance.
+**Primary Role:** Master JavaScript data structures and manipulation patterns.
 
-## Core Responsibilities
+**Boundaries:**
+- IN SCOPE: Objects, arrays, prototypes, destructuring, data transformations
+- OUT OF SCOPE: Fundamentals (Agent 01), Classes syntax (Agent 06)
 
-### 1. Objects in JavaScript
+## Core Competencies
 
-Objects are collections of key-value pairs (properties and methods):
+### 1. Object Operations (Production Patterns)
 
 ```javascript
-// Object literal
+// OBJECT CREATION
 const user = {
-  name: "Alice",
-  age: 30,
-  email: "alice@example.com",
-  greet: function() {
-    return `Hello, I'm ${this.name}`;
+  id: 1,
+  name: 'Alice',
+  email: 'alice@example.com',
+
+  // Method shorthand
+  getDisplayName() {
+    return `${this.name} <${this.email}>`;
   }
 };
 
-// Accessing properties
-user.name;           // "Alice"
-user["email"];       // "alice@example.com"
-user.greet();        // "Hello, I'm Alice"
+// PROPERTY ACCESS
+user.name;           // Dot notation (preferred)
+user['email'];       // Bracket notation (dynamic keys)
+
+const key = 'name';
+user[key];           // Dynamic access
+
+// SAFE PROPERTY ACCESS (Production)
+const city = user?.address?.city ?? 'Unknown';
+
+// COMPUTED PROPERTY NAMES
+const propName = 'dynamicKey';
+const obj = {
+  [propName]: 'value',
+  [`${propName}_backup`]: 'backup'
+};
+
+// OBJECT SPREAD (Immutable updates)
+const updatedUser = {
+  ...user,
+  name: 'Alice Smith',
+  updatedAt: new Date()
+};
 ```
 
-### 2. Object Creation Patterns
+### 2. Object Methods Reference
 
-**Constructor Functions**
 ```javascript
-function Person(name, age) {
-  this.name = name;
-  this.age = age;
+const product = { name: 'Widget', price: 29.99, stock: 100 };
+
+// INTROSPECTION
+Object.keys(product);     // ['name', 'price', 'stock']
+Object.values(product);   // ['Widget', 29.99, 100]
+Object.entries(product);  // [['name', 'Widget'], ['price', 29.99], ['stock', 100]]
+
+// TRANSFORMATION
+Object.fromEntries([      // Entries back to object
+  ['a', 1],
+  ['b', 2]
+]);  // { a: 1, b: 2 }
+
+// MERGING
+Object.assign({}, obj1, obj2);  // Shallow merge
+const merged = { ...obj1, ...obj2 };  // Spread merge (preferred)
+
+// FREEZING (Immutability)
+const config = Object.freeze({
+  API_URL: 'https://api.example.com',
+  TIMEOUT: 5000
+});
+config.API_URL = 'new';  // Silently fails (throws in strict mode)
+
+// SEALING (Prevent add/delete, allow modify)
+const settings = Object.seal({ theme: 'dark' });
+settings.theme = 'light';  // OK
+settings.newProp = 'x';    // Fails
+```
+
+### 3. Array Methods (Cheat Sheet)
+
+```javascript
+const items = [1, 2, 3, 4, 5];
+
+// TRANSFORMATIONAL (Return new array)
+items.map(x => x * 2);           // [2, 4, 6, 8, 10]
+items.filter(x => x > 2);        // [3, 4, 5]
+items.slice(1, 3);               // [2, 3] (start, end)
+items.concat([6, 7]);            // [1, 2, 3, 4, 5, 6, 7]
+items.flat();                    // Flatten nested arrays
+items.flatMap(x => [x, x * 2]);  // Map + flatten
+
+// SEARCH (Return element or index)
+items.find(x => x > 3);          // 4 (first match)
+items.findIndex(x => x > 3);     // 3 (index of first match)
+items.findLast(x => x > 3);      // 5 (last match, ES2023)
+items.indexOf(3);                // 2
+items.includes(3);               // true
+
+// REDUCE (Accumulate to single value)
+items.reduce((sum, x) => sum + x, 0);     // 15
+items.reduceRight((acc, x) => acc - x);   // Right to left
+
+// BOOLEAN CHECKS
+items.every(x => x > 0);         // true (all pass)
+items.some(x => x > 4);          // true (any pass)
+
+// ITERATION (Side effects, returns undefined)
+items.forEach(x => console.log(x));
+
+// MUTATING (Modify original array)
+items.push(6);       // Add to end, returns length
+items.pop();         // Remove from end, returns element
+items.unshift(0);    // Add to start
+items.shift();       // Remove from start
+items.splice(1, 2);  // Remove 2 items at index 1
+items.sort((a, b) => a - b);  // Sort ascending
+items.reverse();     // Reverse in place
+items.fill(0);       // Fill with value
+```
+
+### 4. Data Transformation Patterns
+
+```javascript
+const users = [
+  { id: 1, name: 'Alice', role: 'admin', active: true },
+  { id: 2, name: 'Bob', role: 'user', active: false },
+  { id: 3, name: 'Carol', role: 'user', active: true },
+  { id: 4, name: 'David', role: 'admin', active: true }
+];
+
+// FILTER + MAP (Chain)
+const activeUserNames = users
+  .filter(u => u.active)
+  .map(u => u.name);
+// ['Alice', 'Carol', 'David']
+
+// GROUP BY (Using reduce)
+const byRole = users.reduce((acc, user) => {
+  const key = user.role;
+  acc[key] = acc[key] || [];
+  acc[key].push(user);
+  return acc;
+}, {});
+// { admin: [...], user: [...] }
+
+// Object.groupBy (ES2024)
+const grouped = Object.groupBy(users, u => u.role);
+
+// UNIQUE VALUES
+const roles = [...new Set(users.map(u => u.role))];
+// ['admin', 'user']
+
+// INDEX BY ID
+const usersById = users.reduce((acc, user) => {
+  acc[user.id] = user;
+  return acc;
+}, {});
+// { 1: {...}, 2: {...}, ... }
+
+// PLUCK VALUES
+const names = users.map(u => u.name);
+
+// PARTITION
+const [active, inactive] = users.reduce(
+  ([pass, fail], user) =>
+    user.active ? [[...pass, user], fail] : [pass, [...fail, user]],
+  [[], []]
+);
+```
+
+### 5. Destructuring (Production Patterns)
+
+```javascript
+// OBJECT DESTRUCTURING
+const response = {
+  data: { users: [{ id: 1, name: 'Alice' }] },
+  status: 200,
+  headers: { 'content-type': 'application/json' }
+};
+
+// Basic extraction
+const { status, data } = response;
+
+// Nested extraction
+const { data: { users } } = response;
+
+// Rename + default
+const {
+  status: httpStatus,
+  error = null
+} = response;
+
+// Rest pattern
+const { status: s, ...rest } = response;
+// rest = { data: {...}, headers: {...} }
+
+// ARRAY DESTRUCTURING
+const [first, second, ...others] = [1, 2, 3, 4, 5];
+// first = 1, second = 2, others = [3, 4, 5]
+
+// Skip elements
+const [, , third] = [1, 2, 3];  // third = 3
+
+// Swap variables
+let a = 1, b = 2;
+[a, b] = [b, a];  // a = 2, b = 1
+
+// FUNCTION PARAMETERS
+function createUser({ name, email, role = 'user' }) {
+  return { id: generateId(), name, email, role };
 }
 
-Person.prototype.greet = function() {
-  return `Hello, I'm ${this.name}`;
-};
+createUser({ name: 'Alice', email: 'a@b.com' });
 
-const alice = new Person("Alice", 30);
-```
-
-**Object.create()**
-```javascript
-const personPrototype = {
-  greet() { return `Hello, I'm ${this.name}`; }
-};
-
-const alice = Object.create(personPrototype);
-alice.name = "Alice";
-```
-
-**Classes (Modern Syntax)**
-```javascript
-class Person {
-  constructor(name, age) {
-    this.name = name;
-    this.age = age;
-  }
-
-  greet() {
-    return `Hello, I'm ${this.name}`;
-  }
+// WITH DEFAULTS
+function fetchData({
+  url,
+  method = 'GET',
+  headers = {},
+  timeout = 5000
+} = {}) {
+  // ...
 }
 ```
 
-### 3. Prototypal Inheritance
-
-JavaScript uses prototypal inheritance:
+### 6. Prototype Chain
 
 ```javascript
-// Prototype chain: instance -> constructor.prototype -> Object.prototype -> null
+// PROTOTYPE VISUALIZATION
+/*
+  myDog
+    ↓ __proto__
+  Dog.prototype
+    ↓ __proto__
+  Animal.prototype
+    ↓ __proto__
+  Object.prototype
+    ↓ __proto__
+  null
+*/
 
+// CONSTRUCTOR FUNCTION PATTERN
 function Animal(name) {
   this.name = name;
 }
@@ -91,157 +314,133 @@ Animal.prototype.speak = function() {
   return `${this.name} makes a sound`;
 };
 
-function Dog(name) {
-  Animal.call(this, name);
+function Dog(name, breed) {
+  Animal.call(this, name);  // Call parent constructor
+  this.breed = breed;
 }
 
+// Set up inheritance
 Dog.prototype = Object.create(Animal.prototype);
 Dog.prototype.constructor = Dog;
 
 Dog.prototype.bark = function() {
-  return `${this.name} barks`;
+  return `${this.name} barks!`;
 };
 
-const dog = new Dog("Buddy");
+const myDog = new Dog('Buddy', 'Golden Retriever');
+myDog.speak();  // "Buddy makes a sound" (inherited)
+myDog.bark();   // "Buddy barks!" (own method)
+
+// CHECK PROTOTYPE
+myDog instanceof Dog;     // true
+myDog instanceof Animal;  // true
+Dog.prototype.isPrototypeOf(myDog);  // true
 ```
 
-### 4. Arrays and Array Methods
+## Troubleshooting Guide
 
-**Array Basics**
+### Common Issues & Solutions
+
+| Problem | Symptom | Solution |
+|---------|---------|----------|
+| Shallow copy bug | Nested objects still linked | Use deep clone or structuredClone() |
+| Mutating original | Unexpected side effects | Use spread or map for new array |
+| Reference comparison | Objects never equal | Compare by value or use ID |
+| Missing property | undefined returned | Use optional chaining `?.` |
+
+### Debug Checklist
+
 ```javascript
-const fruits = ["apple", "banana", "orange"];
-fruits[0];          // "apple"
-fruits.length;      // 3
-fruits.push("grape");
-fruits.pop();
+// Step 1: Inspect object structure
+console.log(JSON.stringify(obj, null, 2));
+
+// Step 2: Check prototype chain
+console.log(Object.getPrototypeOf(obj));
+
+// Step 3: List all properties (including inherited)
+for (let prop in obj) {
+  console.log(prop, obj.hasOwnProperty(prop) ? '(own)' : '(inherited)');
+}
+
+// Step 4: Deep clone for debugging
+const snapshot = structuredClone(obj);
 ```
 
-**Array Methods**
-
-**Transformational Methods**
-```javascript
-const numbers = [1, 2, 3, 4, 5];
-
-// map - transform each element
-const doubled = numbers.map(x => x * 2);  // [2, 4, 6, 8, 10]
-
-// filter - keep elements that pass test
-const evens = numbers.filter(x => x % 2 === 0);  // [2, 4]
-
-// reduce - combine into single value
-const sum = numbers.reduce((acc, x) => acc + x, 0);  // 15
-```
-
-**Search Methods**
-```javascript
-numbers.find(x => x > 3);       // 4
-numbers.findIndex(x => x > 3);  // 3
-numbers.includes(3);            // true
-numbers.indexOf(3);             // 2
-```
-
-**Iteration Methods**
-```javascript
-numbers.forEach(x => console.log(x));
-numbers.some(x => x > 4);       // true
-numbers.every(x => x > 0);      // true
-```
-
-### 5. Object Methods
+### Deep Clone Solutions
 
 ```javascript
-const obj = { a: 1, b: 2, c: 3 };
+// PROBLEM: Shallow copy shares references
+const original = { a: 1, nested: { b: 2 } };
+const shallow = { ...original };
+shallow.nested.b = 99;
+console.log(original.nested.b);  // 99 (mutated!)
 
-Object.keys(obj);      // ["a", "b", "c"]
-Object.values(obj);    // [1, 2, 3]
-Object.entries(obj);   // [["a", 1], ["b", 2], ["c", 3]]
+// SOLUTION 1: structuredClone (Modern)
+const deep1 = structuredClone(original);
 
-Object.assign({}, obj, { d: 4 });  // { a: 1, b: 2, c: 3, d: 4 }
-```
+// SOLUTION 2: JSON (Limited - no functions, dates, etc.)
+const deep2 = JSON.parse(JSON.stringify(original));
 
-### 6. Destructuring
-
-**Object Destructuring**
-```javascript
-const person = { name: "Alice", age: 30, city: "NYC" };
-const { name, age } = person;  // Extract properties
-const { name: fullName } = person;  // Rename
-const { country = "USA" } = person;  // Default value
-```
-
-**Array Destructuring**
-```javascript
-const colors = ["red", "green", "blue"];
-const [first, second] = colors;  // first = "red", second = "green"
-const [, , third] = colors;      // Skip elements: third = "blue"
+// SOLUTION 3: Recursive function
+function deepClone(obj) {
+  if (obj === null || typeof obj !== 'object') return obj;
+  if (Array.isArray(obj)) return obj.map(deepClone);
+  return Object.fromEntries(
+    Object.entries(obj).map(([k, v]) => [k, deepClone(v)])
+  );
+}
 ```
 
 ## Learning Outcomes
 
-After studying with this agent, you should be able to:
+After mastering this agent:
 
-1. ✅ Create and manipulate objects effectively
-2. ✅ Use constructor functions and prototypal inheritance
-3. ✅ Apply array methods to transform data
-4. ✅ Use Object methods for introspection
-5. ✅ Destructure complex data structures
-6. ✅ Implement inheritance patterns
+1. Create and manipulate objects effectively
+2. Apply all array methods appropriately
+3. Transform data with chained operations
+4. Destructure complex nested structures
+5. Understand prototypal inheritance
+6. Avoid mutation bugs with immutable patterns
 
-## When to Use This Agent
+## Related Skills & Agents
 
-- Working with complex data
-- Building OOP patterns
-- Manipulating arrays and objects
-- Understanding inheritance
-- Solving data transformation problems
+| Need | Go To |
+|------|-------|
+| Functions & scope | Agent 02: Functions & Scope |
+| ES6 Classes | Agent 06: Modern ES6+ |
+| Async data fetching | Agent 04: Asynchronous |
+| Quick reference | Skill: data-structures |
 
-## Related Skills
+## Practice Exercises
 
-- **data-structures** - Advanced patterns and techniques
-- **fundamentals** - Review primitive types
-- **modern-javascript** - Classes and modern syntax
-
-## Common Patterns
-
-### Module Pattern
+### Exercise 1: Data Transformation
 ```javascript
-const calculator = (() => {
-  const result = 0;
+const orders = [
+  { id: 1, customer: 'Alice', items: ['Widget', 'Gadget'], total: 59.99 },
+  { id: 2, customer: 'Bob', items: ['Widget'], total: 29.99 },
+  { id: 3, customer: 'Alice', items: ['Gadget', 'Tool'], total: 79.99 }
+];
 
-  return {
-    add: (x) => result + x,
-    subtract: (x) => result - x,
-    multiply: (x) => result * x
-  };
-})();
+// Task: Get total revenue per customer
+// Expected: { Alice: 139.98, Bob: 29.99 }
 ```
 
-### Factory Pattern
+### Exercise 2: Deep Merge
 ```javascript
-function createUser(name, email) {
-  return {
-    name,
-    email,
-    getInfo() { return `${name} (${email})`; }
-  };
+// Create a function that deeply merges two objects
+function deepMerge(target, source) {
+  // Your code here
 }
 
-const user = createUser("Alice", "alice@example.com");
+const defaults = { a: 1, b: { c: 2, d: 3 } };
+const overrides = { b: { c: 99 } };
+deepMerge(defaults, overrides);
+// { a: 1, b: { c: 99, d: 3 } }
 ```
-
-## Practice Recommendations
-
-1. **Object exercises** - Create, modify, introspect objects
-2. **Array challenges** - map/filter/reduce puzzles
-3. **Projects** - Library system, task manager
-4. **Inheritance practice** - Implement class hierarchies
-
-## Prerequisites
-
-- Master JavaScript Fundamentals
-- Complete Functions & Scope agent
-- Understand closures and this binding
 
 ## Next Steps
 
-After mastering objects and arrays, explore the **Asynchronous JavaScript Agent** to handle real-world async operations.
+After mastering objects and arrays:
+1. Proceed to Agent 04 - Asynchronous JavaScript
+2. Practice data transformation patterns
+3. Build: API response transformers, state management utilities

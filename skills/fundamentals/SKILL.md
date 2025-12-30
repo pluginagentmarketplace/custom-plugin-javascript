@@ -4,349 +4,155 @@ description: Core JavaScript fundamentals including variables, data types, opera
 sasmp_version: "1.3.0"
 bonded_agent: 01-javascript-fundamentals
 bond_type: PRIMARY_BOND
+
+# Production-Grade Configuration
+skill_type: reference
+response_format: code_first
+max_tokens: 1500
+
+parameter_validation:
+  required: [topic]
+  optional: [depth, examples]
+
+retry_logic:
+  on_ambiguity: ask_clarification
+  fallback: provide_basics_first
+
+observability:
+  entry_log: "Fundamentals skill activated"
+  exit_log: "Fundamentals reference provided"
 ---
 
 # JavaScript Fundamentals Skill
 
-## Quick Start
-
-JavaScript has 8 data types: 7 primitives (string, number, boolean, null, undefined, symbol, bigint) and 1 object type.
-
-```javascript
-// Variables
-const x = 10;           // constant
-let y = 20;             // reassignable
-var z = 30;             // function scoped (avoid)
-
-// Data types
-const str = "hello";    // string
-const num = 42;         // number
-const bool = true;      // boolean
-const obj = {};         // object
-const arr = [];         // array (object)
-const fn = () => {};    // function (object)
-```
-
-## Variables and Data Types
+## Quick Reference Card
 
 ### Variable Declaration
-
 ```javascript
-// const - preferred choice
-const PI = 3.14159;
-// PI = 3.14;  // Error: assignment to constant
-
-// let - for reassignable variables
-let count = 0;
-count = 1;  // OK
-
-// var - old way, function scoped
-var name = "Alice";  // Avoid in modern code
+const PI = 3.14159;     // Immutable binding (preferred)
+let count = 0;          // Reassignable
+var legacy = "avoid";   // Function-scoped (avoid)
 ```
 
-### Primitive Data Types
+### 8 Data Types
+| Type | Example | typeof |
+|------|---------|--------|
+| String | `"hello"` | `"string"` |
+| Number | `42`, `3.14`, `NaN` | `"number"` |
+| Boolean | `true`, `false` | `"boolean"` |
+| Null | `null` | `"object"` |
+| Undefined | `undefined` | `"undefined"` |
+| Symbol | `Symbol('id')` | `"symbol"` |
+| BigInt | `9007199254740991n` | `"bigint"` |
+| Object | `{}`, `[]`, `fn` | `"object"` |
 
+### Operators Cheat Sheet
 ```javascript
-// String
-const message = "Hello";
-const template = `Hello, ${name}!`;
+// Arithmetic
++ - * / % **
 
-// Number (includes Infinity, NaN)
-const integer = 42;
-const decimal = 3.14;
-const infinity = Infinity;
-const notANumber = NaN;
+// Comparison (always use strict)
+=== !== > < >= <=
 
-// Boolean
-const isActive = true;
-const isCompleted = false;
+// Logical
+&& || !
 
-// Symbol
-const unique = Symbol("id");
+// Nullish
+?? ?.
 
-// BigInt (for large integers)
-const big = 100n;
-
-// undefined (uninitialized)
-let x;
-console.log(x);  // undefined
-
-// null (intentional absence)
-const empty = null;
+// Assignment
+= += -= *= /= ??= ||= &&=
 ```
 
-### Type Checking
-
+### Control Flow Patterns
 ```javascript
-typeof "hello"        // "string"
-typeof 42             // "number"
-typeof true           // "boolean"
-typeof {}             // "object"
-typeof []             // "object" (arrays are objects!)
-typeof undefined      // "undefined"
-typeof (() => {})     // "function"
-
-// instanceof for objects
-[] instanceof Array   // true
-{} instanceof Object  // true
-```
-
-## Operators
-
-### Arithmetic Operators
-
-```javascript
-10 + 5    // 15
-10 - 5    // 5
-10 * 5    // 50
-10 / 5    // 2
-10 % 3    // 1 (modulo)
-2 ** 3    // 8 (exponentiation)
-```
-
-### Comparison Operators
-
-```javascript
-5 == "5"      // true (loose equality, coerces types)
-5 === "5"     // false (strict equality)
-5 != "5"      // false
-5 !== "5"     // true
-5 > 3         // true
-5 >= 5        // true
-5 < 10        // true
-5 <= 5        // true
-```
-
-### Logical Operators
-
-```javascript
-true && true      // true (AND)
-true || false     // true (OR)
-!true             // false (NOT)
-
-// Short-circuit evaluation
-const name = userInput || "Guest";
-const result = isValid && performAction();
-```
-
-### Assignment Operators
-
-```javascript
-let x = 5;
-x += 3;   // x = x + 3 = 8
-x -= 2;   // x = x - 2 = 6
-x *= 2;   // x = x * 2 = 12
-x /= 4;   // x = x / 4 = 3
-
-// Increment/Decrement
-let count = 0;
-count++;  // 1
-++count;  // 2
-count--;  // 1
-```
-
-### Ternary Operator
-
-```javascript
-const age = 20;
-const status = age >= 18 ? "adult" : "minor";
-
-// Nested
-const category = age < 13 ? "child" : age < 18 ? "teen" : "adult";
-```
-
-## Control Flow
-
-### Conditional Statements
-
-```javascript
-// if statement
-if (score >= 90) {
-  console.log("Grade: A");
-} else if (score >= 80) {
-  console.log("Grade: B");
-} else {
-  console.log("Grade: F");
+// Early return (preferred)
+function validate(input) {
+  if (!input) return { error: 'Required' };
+  if (input.length < 3) return { error: 'Too short' };
+  return { valid: true };
 }
 
-// switch statement
-switch (day) {
-  case 1:
-    console.log("Monday");
-    break;
-  case 2:
-    console.log("Tuesday");
-    break;
-  default:
-    console.log("Weekend");
+// Switch with exhaustive handling
+function getColor(status) {
+  switch (status) {
+    case 'success': return 'green';
+    case 'warning': return 'yellow';
+    case 'error': return 'red';
+    default: return 'gray';
+  }
 }
 ```
 
-### Loops
-
+### Type Coercion Rules
 ```javascript
-// for loop
-for (let i = 0; i < 5; i++) {
-  console.log(i);  // 0, 1, 2, 3, 4
-}
+// Explicit conversion (preferred)
+Number('42')     // 42
+String(42)       // "42"
+Boolean(1)       // true
 
-// while loop
-let x = 0;
-while (x < 5) {
-  console.log(x);
-  x++;
-}
-
-// do...while (always runs at least once)
-let y = 0;
-do {
-  console.log(y);
-  y++;
-} while (y < 5);
-
-// for...of (iterate values)
-const arr = [10, 20, 30];
-for (const value of arr) {
-  console.log(value);  // 10, 20, 30
-}
-
-// for...in (iterate keys)
-const obj = { a: 1, b: 2 };
-for (const key in obj) {
-  console.log(key);  // "a", "b"
-}
+// Truthy values: non-zero numbers, non-empty strings, objects
+// Falsy values: 0, "", null, undefined, NaN, false
 ```
 
-### Break and Continue
-
+### Modern Operators
 ```javascript
-// break exits loop
-for (let i = 0; i < 5; i++) {
-  if (i === 3) break;
-  console.log(i);  // 0, 1, 2
-}
+// Nullish coalescing
+const name = input ?? 'Guest';     // Only null/undefined
 
-// continue skips iteration
-for (let i = 0; i < 5; i++) {
-  if (i === 2) continue;
-  console.log(i);  // 0, 1, 3, 4
-}
+// Optional chaining
+const city = user?.address?.city;  // Safe navigation
+
+// Logical assignment
+config.debug ??= false;            // Assign if nullish
 ```
 
-## Type Coercion
+## Troubleshooting
 
-### Implicit Coercion
+### Common Issues
 
+| Error | Cause | Fix |
+|-------|-------|-----|
+| `ReferenceError: x is not defined` | Variable not declared | Check spelling, scope |
+| `TypeError: Cannot read property` | Accessing null/undefined | Use optional chaining `?.` |
+| `NaN` result | Invalid number operation | Validate input types |
+| Unexpected `true`/`false` | Loose equality `==` | Use strict `===` |
+
+### Debug Checklist
 ```javascript
-// String concatenation
-"5" + 3         // "53"
-"5" - 3         // 2 (converts to numbers)
-"5" * 2         // 10
-"5" / 2         // 2.5
+// 1. Check type
+console.log(typeof variable);
 
-// Boolean to number
-true + 1        // 2
-false + 1       // 1
-true - false    // 1
+// 2. Check value
+console.log(JSON.stringify(variable));
 
-// Nullish values
-null + 5        // 5
-undefined + 5   // NaN
+// 3. Check for null/undefined
+console.log(variable === null, variable === undefined);
 
-// Truthy and falsy
-if ("hello") {}     // truthy
-if ("") {}          // falsy
-if (0) {}           // falsy
-if (1) {}           // truthy
-if (null) {}        // falsy
-if (undefined) {}   // falsy
-if (false) {}       // falsy
+// 4. Use debugger
+debugger;
 ```
 
-### Explicit Coercion
+## Production Patterns
 
+### Input Validation
 ```javascript
-// To string
-String(123)           // "123"
-(123).toString()      // "123"
-123 + ""              // "123"
-
-// To number
-Number("123")         // 123
-parseInt("123px")     // 123
-parseFloat("3.14")    // 3.14
-+"123"                // 123
-
-// To boolean
-Boolean(0)            // false
-Boolean(1)            // true
-!!0                   // false
-!!1                   // true
-```
-
-## Error Handling
-
-```javascript
-try {
-  // Code that might throw error
-  throw new Error("Something went wrong");
-} catch (error) {
-  // Handle error
-  console.error(error.message);
-} finally {
-  // Always executes
-  console.log("Cleanup");
+function processNumber(value) {
+  if (typeof value !== 'number' || Number.isNaN(value)) {
+    throw new TypeError('Expected a valid number');
+  }
+  return value * 2;
 }
 ```
 
-## Common Patterns
-
-### Nullish Coalescing (??)
-
+### Safe Property Access
 ```javascript
-const name = null ?? "Guest";  // "Guest"
-const count = 0 ?? 10;         // 0 (0 is not nullish)
-const age = undefined ?? 18;   // 18
+const city = user?.address?.city ?? 'Unknown';
+const callback = options.onComplete?.();
 ```
 
-### Optional Chaining (?.)
+## Related
 
-```javascript
-const user = { name: "Alice", address: { city: "NYC" } };
-
-user.address?.city;      // "NYC"
-user.phone?.number;      // undefined (safe)
-user.greet?.();          // undefined (safe function call)
-```
-
-## Debugging
-
-```javascript
-console.log("Message");     // Log value
-console.warn("Warning");    // Warning message
-console.error("Error");     // Error message
-console.table({a: 1, b: 2});  // Table format
-
-// Debugging
-debugger;  // Set breakpoint
-```
-
-## Practice Exercises
-
-1. Create variables for your name, age, and favorite color
-2. Use operators to calculate your age in days
-3. Use conditionals to create a grading system
-4. Use loops to print multiplication tables
-5. Write a function that checks if a number is prime
-
-## Resources
-
-- MDN: Data Types and Operators
-- JavaScript.info: Variables and Basic Operators
-- Exercism: JavaScript track
-
-## Next Steps
-
-- Move to the **Functions & Scope** skill
-- Practice with coding challenges
-- Build small projects using these fundamentals
+- **Agent 01**: JavaScript Fundamentals (detailed learning)
+- **Skill: functions**: Function patterns
+- **Skill: data-structures**: Objects and arrays

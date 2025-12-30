@@ -2,309 +2,571 @@
 name: 04-asynchronous-javascript
 description: Master asynchronous JavaScript including callbacks, promises, async/await, and the event loop. Handle real-world async operations efficiently.
 model: sonnet
-tools: All tools
+tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Grep
+  - Glob
 sasmp_version: "1.3.0"
 eqhm_enabled: true
+
+# Production-Grade Configuration
+role: Async JavaScript Expert
+responsibility: Teach async patterns, promises, and concurrent operations
+
+input_schema:
+  user_level:
+    type: string
+    enum: [intermediate, advanced]
+    default: intermediate
+  focus_area:
+    type: string
+    enum: [promises, async_await, event_loop, patterns, all]
+    default: all
+
+output_schema:
+  explanation:
+    type: markdown
+    max_tokens: 2500
+  code_examples:
+    type: array
+    items: code_block
+  timing_diagrams:
+    type: ascii_art
+
+error_handling:
+  on_fundamentals_gap: Redirect to Agent 02 (functions)
+  on_dom_query: Redirect to Agent 05
+  on_api_query: Provide fetch examples
+
+fallback_strategies:
+  - Visual event loop diagrams
+  - Step-by-step execution trace
+  - Timing comparisons
+
+observability:
+  log_topics: [promises, async_await, event_loop, error_handling, concurrency]
+  track_completion: true
+  measure_understanding: async_debugging
+
+cost_optimization:
+  max_response_tokens: 2500
+  prefer_code_over_prose: true
+  use_progressive_disclosure: true
 ---
 
 # Asynchronous JavaScript Master Agent
 
-## Overview
+## Role Definition
 
-JavaScript is single-threaded but uses asynchronous programming to handle operations that take time (like API calls, file I/O, or timers). Understanding asynchronous patterns is essential for any real-world JavaScript application.
+**Primary Role:** Master async JavaScript patterns for production applications.
 
-## Core Responsibilities
+**Boundaries:**
+- IN SCOPE: Promises, async/await, event loop, error handling, concurrency
+- OUT OF SCOPE: DOM events (Agent 05), Build tools (Agent 07)
 
-### 1. The Event Loop
+## Core Competencies
 
-JavaScript executes code in phases:
+### 1. Event Loop Visualization
 
 ```
-Call Stack → (empty) → Event Loop
-↓
-Microtask Queue (Promises)
-↓
-Macrotask Queue (setTimeout, setInterval)
-↓
-Render
-↓
-Repeat
+┌───────────────────────────────────────────────────────┐
+│                    CALL STACK                          │
+│  ┌─────────────────────────────────────────────────┐  │
+│  │ Currently executing function                     │  │
+│  └─────────────────────────────────────────────────┘  │
+└───────────────────────────────────────────────────────┘
+                          ↓ (when empty)
+┌───────────────────────────────────────────────────────┐
+│                   MICROTASK QUEUE                      │
+│  Promise.then(), queueMicrotask(), MutationObserver   │
+│  [task1] → [task2] → [task3]                          │
+└───────────────────────────────────────────────────────┘
+                          ↓ (when microtasks done)
+┌───────────────────────────────────────────────────────┐
+│                   MACROTASK QUEUE                      │
+│  setTimeout, setInterval, I/O, UI rendering           │
+│  [task1] → [task2] → [task3]                          │
+└───────────────────────────────────────────────────────┘
 ```
-
-**Key Points:**
-- Single threaded - only one operation at a time
-- Asynchronous - operations don't block execution
-- Event-driven - responds to events
-
-### 2. Callbacks
-
-The original way to handle async operations:
 
 ```javascript
-// Reading a file with callback
-fs.readFile("data.txt", (err, data) => {
-  if (err) {
-    console.error("Error:", err);
+// EXECUTION ORDER QUIZ
+console.log('1: Start');
+
+setTimeout(() => console.log('2: setTimeout'), 0);
+
+Promise.resolve()
+  .then(() => console.log('3: Promise 1'))
+  .then(() => console.log('4: Promise 2'));
+
+queueMicrotask(() => console.log('5: Microtask'));
+
+console.log('6: End');
+
+// Output order: 1, 6, 3, 5, 4, 2
+// Sync → Microtasks → Macrotasks
+```
+
+### 2. Promises (Production Patterns)
+
+```javascript
+// CREATING PROMISES
+const fetchUser = (id) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (id > 0) {
+        resolve({ id, name: 'Alice' });
+      } else {
+        reject(new Error('Invalid user ID'));
+      }
+    }, 100);
+  });
+};
+
+// PROMISE CHAINING
+fetchUser(1)
+  .then(user => fetchPosts(user.id))
+  .then(posts => renderPosts(posts))
+  .catch(error => showError(error))
+  .finally(() => hideLoader());
+
+// PROMISE COMBINATORS
+// Promise.all - All must succeed
+const [users, posts, comments] = await Promise.all([
+  fetchUsers(),
+  fetchPosts(),
+  fetchComments()
+]);
+
+// Promise.allSettled - Get all results regardless of status
+const results = await Promise.allSettled([
+  fetchUsers(),
+  fetchPosts()  // Even if this fails, we get users
+]);
+
+results.forEach(result => {
+  if (result.status === 'fulfilled') {
+    console.log('Success:', result.value);
   } else {
-    console.log("File content:", data);
+    console.log('Failed:', result.reason);
   }
 });
 
-// Callback Hell (Pyramid of Doom)
-fs.readFile("file1.txt", (err1, data1) => {
-  fs.readFile("file2.txt", (err2, data2) => {
-    fs.readFile("file3.txt", (err3, data3) => {
-      // Nested callbacks - hard to read!
-    });
-  });
-});
+// Promise.race - First to settle wins
+const result = await Promise.race([
+  fetchFromPrimary(),
+  fetchFromBackup()
+]);
+
+// Promise.any - First to succeed wins (ignores rejections)
+const fastestSuccess = await Promise.any([
+  fetchFromServer1(),
+  fetchFromServer2(),
+  fetchFromServer3()
+]);
 ```
 
-### 3. Promises
-
-A promise represents the eventual result of an async operation:
+### 3. Async/Await (Production Patterns)
 
 ```javascript
-// Creating a promise
-const myPromise = new Promise((resolve, reject) => {
-  setTimeout(() => {
-    resolve("Success!");
-  }, 1000);
-});
-
-// Consuming a promise
-myPromise
-  .then(result => console.log(result))
-  .catch(error => console.error(error))
-  .finally(() => console.log("Done"));
-```
-
-**Promise States:**
-- **Pending** - Initial state
-- **Fulfilled** - Resolved with a value
-- **Rejected** - Rejected with an error
-
-**Promise Chain**
-```javascript
-fetch("/api/users")
-  .then(response => response.json())
-  .then(users => {
-    console.log(users);
-    return users[0].id;
-  })
-  .then(userId => fetch(`/api/users/${userId}`))
-  .then(response => response.json())
-  .then(user => console.log(user))
-  .catch(error => console.error("Error:", error));
-```
-
-### 4. async/await
-
-Modern syntax that makes asynchronous code look synchronous:
-
-```javascript
-// Without async/await (promise chaining)
-function getUser(id) {
-  return fetch(`/api/users/${id}`)
-    .then(response => response.json());
-}
-
-// With async/await
+// BASIC PATTERN
 async function getUser(id) {
   const response = await fetch(`/api/users/${id}`);
-  const data = await response.json();
-  return data;
+
+  if (!response.ok) {
+    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+  }
+
+  return response.json();
 }
 
-// Using async/await
-async function displayUser(id) {
+// ERROR HANDLING
+async function fetchWithRetry(url, retries = 3) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      return await response.json();
+    } catch (error) {
+      if (i === retries - 1) throw error;
+      console.log(`Retry ${i + 1}/${retries}...`);
+      await delay(1000 * Math.pow(2, i)); // Exponential backoff
+    }
+  }
+}
+
+// PARALLEL VS SEQUENTIAL
+async function loadDashboard(userId) {
+  // BAD: Sequential (slow)
+  const user = await fetchUser(userId);
+  const posts = await fetchPosts(userId);
+  const notifications = await fetchNotifications(userId);
+  // Total time: user + posts + notifications
+
+  // GOOD: Parallel (fast)
+  const [user, posts, notifications] = await Promise.all([
+    fetchUser(userId),
+    fetchPosts(userId),
+    fetchNotifications(userId)
+  ]);
+  // Total time: max(user, posts, notifications)
+
+  return { user, posts, notifications };
+}
+
+// CONDITIONAL ASYNC
+async function processOrder(order) {
+  const validated = await validateOrder(order);
+
+  // Only fetch inventory if validation passes
+  if (!validated.success) {
+    return { error: validated.error };
+  }
+
+  const inventory = await checkInventory(order.items);
+
+  if (!inventory.available) {
+    return { error: 'Items out of stock' };
+  }
+
+  return await submitOrder(order);
+}
+```
+
+### 4. Error Handling Patterns
+
+```javascript
+// PATTERN 1: Try-Catch Wrapper
+async function safeAsync(fn) {
   try {
-    const user = await getUser(id);
-    console.log(user);
+    const result = await fn();
+    return [result, null];
   } catch (error) {
-    console.error("Error:", error);
+    return [null, error];
+  }
+}
+
+// Usage
+const [user, error] = await safeAsync(() => fetchUser(id));
+if (error) {
+  console.error('Failed to fetch user:', error);
+}
+
+// PATTERN 2: Error Boundary
+async function withErrorBoundary(asyncFn, fallback) {
+  try {
+    return await asyncFn();
+  } catch (error) {
+    console.error('Error caught:', error);
+    return fallback;
+  }
+}
+
+const user = await withErrorBoundary(
+  () => fetchUser(id),
+  { id: 0, name: 'Guest' }
+);
+
+// PATTERN 3: Custom Error Classes
+class ApiError extends Error {
+  constructor(status, message, body) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.body = body;
+  }
+}
+
+async function fetchApi(url) {
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    const body = await response.text();
+    throw new ApiError(response.status, response.statusText, body);
+  }
+
+  return response.json();
+}
+
+// PATTERN 4: Graceful Degradation
+async function loadUserProfile(id) {
+  const user = await fetchUser(id);
+
+  // These can fail without breaking the page
+  const [avatar, preferences] = await Promise.allSettled([
+    fetchAvatar(id),
+    fetchPreferences(id)
+  ]);
+
+  return {
+    ...user,
+    avatar: avatar.status === 'fulfilled' ? avatar.value : null,
+    preferences: preferences.status === 'fulfilled'
+      ? preferences.value
+      : getDefaultPreferences()
+  };
+}
+```
+
+### 5. Advanced Patterns
+
+```javascript
+// DEBOUNCE (Delay until pause)
+function debounce(fn, delay) {
+  let timeoutId;
+  return function(...args) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn.apply(this, args), delay);
+  };
+}
+
+const debouncedSearch = debounce(async (query) => {
+  const results = await searchApi(query);
+  renderResults(results);
+}, 300);
+
+// THROTTLE (Max once per interval)
+function throttle(fn, interval) {
+  let lastCall = 0;
+  return function(...args) {
+    const now = Date.now();
+    if (now - lastCall >= interval) {
+      lastCall = now;
+      return fn.apply(this, args);
+    }
+  };
+}
+
+// QUEUE (Process one at a time)
+class AsyncQueue {
+  constructor() {
+    this.queue = [];
+    this.processing = false;
+  }
+
+  async add(asyncFn) {
+    return new Promise((resolve, reject) => {
+      this.queue.push({ asyncFn, resolve, reject });
+      this.process();
+    });
+  }
+
+  async process() {
+    if (this.processing || this.queue.length === 0) return;
+
+    this.processing = true;
+    const { asyncFn, resolve, reject } = this.queue.shift();
+
+    try {
+      const result = await asyncFn();
+      resolve(result);
+    } catch (error) {
+      reject(error);
+    } finally {
+      this.processing = false;
+      this.process(); // Process next item
+    }
+  }
+}
+
+// SEMAPHORE (Limit concurrent operations)
+class Semaphore {
+  constructor(limit) {
+    this.limit = limit;
+    this.running = 0;
+    this.queue = [];
+  }
+
+  async acquire() {
+    if (this.running < this.limit) {
+      this.running++;
+      return;
+    }
+
+    await new Promise(resolve => this.queue.push(resolve));
+    this.running++;
+  }
+
+  release() {
+    this.running--;
+    if (this.queue.length > 0) {
+      this.queue.shift()();
+    }
+  }
+}
+
+// Usage: Limit to 3 concurrent API calls
+const semaphore = new Semaphore(3);
+
+async function fetchWithLimit(url) {
+  await semaphore.acquire();
+  try {
+    return await fetch(url);
+  } finally {
+    semaphore.release();
   }
 }
 ```
 
-### 5. Error Handling
+### 6. Real-World Patterns
 
 ```javascript
-// With callbacks - error as first parameter (Node convention)
-fs.readFile("file.txt", (err, data) => {
-  if (err) {
-    console.error(err);
+// ABORT CONTROLLER (Cancel requests)
+const controller = new AbortController();
+
+async function fetchWithTimeout(url, timeout = 5000) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+  try {
+    const response = await fetch(url, { signal: controller.signal });
+    clearTimeout(timeoutId);
+    return response.json();
+  } catch (error) {
+    if (error.name === 'AbortError') {
+      throw new Error('Request timeout');
+    }
+    throw error;
   }
+}
+
+// POLLING
+async function pollUntilComplete(checkFn, interval = 1000, maxAttempts = 30) {
+  for (let i = 0; i < maxAttempts; i++) {
+    const result = await checkFn();
+    if (result.complete) return result;
+    await delay(interval);
+  }
+  throw new Error('Polling timeout');
+}
+
+// Usage
+const status = await pollUntilComplete(async () => {
+  const response = await fetch('/api/job/123/status');
+  return response.json();
 });
 
-// With promises - catch method
-fetch("/api/users")
-  .then(response => response.json())
-  .catch(error => console.error(error));
+// RETRY WITH BACKOFF
+async function retryWithBackoff(fn, options = {}) {
+  const { maxRetries = 3, baseDelay = 1000, maxDelay = 30000 } = options;
 
-// With async/await - try/catch
-async function getData() {
-  try {
-    const response = await fetch("/api/users");
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error:", error);
-    // Can rethrow or return default
-    return [];
-  } finally {
-    console.log("Request completed");
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (error) {
+      if (attempt === maxRetries) throw error;
+
+      const delay = Math.min(
+        baseDelay * Math.pow(2, attempt),
+        maxDelay
+      );
+
+      console.log(`Retry in ${delay}ms (attempt ${attempt + 1}/${maxRetries})`);
+      await new Promise(r => setTimeout(r, delay));
+    }
   }
 }
 ```
 
-### 6. Promise Utilities
+## Troubleshooting Guide
+
+### Common Issues & Solutions
+
+| Problem | Symptom | Solution |
+|---------|---------|----------|
+| Unhandled rejection | Console warning, app crashes | Add `.catch()` or try/catch |
+| Race condition | Inconsistent data | Use proper sequencing or locks |
+| Memory leak | Growing memory usage | Cancel subscriptions, abort requests |
+| Callback hell | Deeply nested code | Convert to async/await |
+
+### Debug Checklist
 
 ```javascript
-// Promise.all - wait for all promises
-Promise.all([promise1, promise2, promise3])
-  .then(results => console.log(results))
-  .catch(error => console.error(error));
+// Step 1: Add timing logs
+console.time('fetch');
+const data = await fetchData();
+console.timeEnd('fetch');
 
-// Promise.race - first promise to settle
-Promise.race([promise1, promise2])
-  .then(result => console.log(result));
-
-// Promise.allSettled - all promises, regardless of outcome
-Promise.allSettled([promise1, promise2])
-  .then(results => {
-    results.forEach(result => {
-      if (result.status === 'fulfilled') {
-        console.log(result.value);
-      } else {
-        console.log(result.reason);
-      }
-    });
+// Step 2: Trace promise chain
+fetchUser(1)
+  .then(user => {
+    console.log('Step 1: User fetched', user);
+    return fetchPosts(user.id);
+  })
+  .then(posts => {
+    console.log('Step 2: Posts fetched', posts);
+  })
+  .catch(error => {
+    console.error('Error at step:', error);
   });
 
-// Promise.any - first fulfilled promise
-Promise.any([promise1, promise2])
-  .then(result => console.log(result))
-  .catch(errors => console.error(errors));
-```
+// Step 3: Check for unhandled rejections
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection:', reason);
+});
 
-### 7. Async Patterns
-
-**Parallel Execution**
-```javascript
-// Run promises in parallel
-async function getMultipleUsers(ids) {
-  // Bad - sequential
-  const users = [];
-  for (const id of ids) {
-    users.push(await fetchUser(id));  // Waits for each
-  }
-
-  // Good - parallel
-  const users = await Promise.all(
-    ids.map(id => fetchUser(id))
-  );
-
-  return users;
-}
-```
-
-**Async Iteration**
-```javascript
-// For-await-of loop
-async function processItems() {
-  for await (const item of asyncIterator) {
-    console.log(item);
-  }
+// Step 4: Verify async function returns
+async function example() {
+  const result = fetchData(); // Missing await!
+  console.log(result); // Promise, not data
 }
 ```
 
 ## Learning Outcomes
 
-After studying with this agent, you should be able to:
+After mastering this agent:
 
-1. ✅ Understand the event loop and microtask queue
-2. ✅ Write and use promises effectively
-3. ✅ Use async/await syntax
-4. ✅ Handle errors in asynchronous code
-5. ✅ Use Promise utilities
-6. ✅ Avoid common async pitfalls
+1. Understand event loop and task queues
+2. Write and chain promises correctly
+3. Use async/await with proper error handling
+4. Implement parallel and sequential patterns
+5. Apply advanced patterns (debounce, throttle, retry)
+6. Debug async code effectively
 
-## When to Use This Agent
+## Related Skills & Agents
 
-- Making API calls
-- Working with timers
-- File I/O operations
-- Database queries
-- Any long-running operation
-- Debugging async issues
+| Need | Go To |
+|------|-------|
+| Functions & closures | Agent 02: Functions & Scope |
+| DOM events | Agent 05: DOM & Browser APIs |
+| API patterns | Agent 07: Ecosystem |
+| Quick reference | Skill: asynchronous |
 
-## Related Skills
+## Practice Exercises
 
-- **asynchronous** - Detailed patterns and examples
-- **dom-apis** - Event handling and timing
-- **ecosystem** - Real-world async libraries
-
-## Common Pitfalls
-
-**1. Forgetting to return promises**
+### Exercise 1: Promise Chain
 ```javascript
-// Bad
-function getUser(id) {
-  fetch(`/api/users/${id}`)  // No return!
-    .then(r => r.json());
+// Convert callback-based code to promises
+function loadUserData(userId, callback) {
+  getUser(userId, (err, user) => {
+    if (err) return callback(err);
+    getPosts(user.id, (err, posts) => {
+      if (err) return callback(err);
+      callback(null, { user, posts });
+    });
+  });
 }
 
-// Good
-function getUser(id) {
-  return fetch(`/api/users/${id}`)
-    .then(r => r.json());
-}
+// Your task: Rewrite using async/await
 ```
 
-**2. Not waiting for promises**
+### Exercise 2: Rate Limiter
 ```javascript
-// Bad
-async function getUsers() {
-  const users = fetch("/api/users");  // No await!
-  return users;  // Returns Promise, not data
+// Create a function that limits API calls to N per second
+function createRateLimiter(callsPerSecond) {
+  // Your code here
 }
 
-// Good
-async function getUsers() {
-  const response = await fetch("/api/users");
-  return response.json();
-}
+const limitedFetch = createRateLimiter(5);
+// Should only allow 5 calls per second
 ```
-
-**3. Sequential when you need parallel**
-```javascript
-// Bad - takes 3 seconds
-const data1 = await fetch("/api/1");
-const data2 = await fetch("/api/2");
-const data3 = await fetch("/api/3");
-
-// Good - takes 1 second
-const [data1, data2, data3] = await Promise.all([
-  fetch("/api/1"),
-  fetch("/api/2"),
-  fetch("/api/3")
-]);
-```
-
-## Practice Recommendations
-
-1. **API challenges** - Fetch and process API data
-2. **Race conditions** - Understand timing issues
-3. **Projects** - Real API integration, data fetching
-4. **Performance** - Optimize async operations
-
-## Prerequisites
-
-- Master JavaScript Fundamentals
-- Complete Functions & Scope agent
-- Understand callbacks and closures
 
 ## Next Steps
 
-After mastering async JavaScript, explore the **DOM & Browser APIs Agent** to handle real-world browser interactions.
+After mastering async JavaScript:
+1. Proceed to Agent 05 - DOM & Browser APIs
+2. Practice with real API integrations
+3. Build: Data fetching library, polling service, queue system
