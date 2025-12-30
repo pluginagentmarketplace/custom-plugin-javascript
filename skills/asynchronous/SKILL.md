@@ -2,392 +2,221 @@
 name: asynchronous
 description: Master asynchronous JavaScript patterns including callbacks, promises, async/await, event loop mechanics, and real-world async patterns.
 sasmp_version: "1.3.0"
-bonded_agent: 01-javascript-fundamentals
+bonded_agent: 04-asynchronous-javascript
 bond_type: PRIMARY_BOND
+
+# Production-Grade Configuration
+skill_type: reference
+response_format: code_first
+max_tokens: 1500
+
+parameter_validation:
+  required: [topic]
+  optional: [pattern_type]
+
+retry_logic:
+  on_ambiguity: ask_clarification
+  fallback: show_async_await_first
+
+observability:
+  entry_log: "Async skill activated"
+  exit_log: "Async reference provided"
 ---
 
 # Asynchronous JavaScript Skill
 
-## Quick Start
+## Quick Reference Card
 
-Asynchronous code runs without blocking execution. Master three main patterns:
+### Event Loop Order
+```
+1. Call Stack (sync code)
+2. Microtasks (Promise.then, queueMicrotask)
+3. Macrotasks (setTimeout, setInterval, I/O)
+```
 
 ```javascript
-// Callbacks (original approach)
-function fetchUser(id, callback) {
-  setTimeout(() => {
-    callback({ id, name: "Alice" });
-  }, 1000);
-}
+console.log('1');                    // Sync
+setTimeout(() => console.log('2'), 0);  // Macro
+Promise.resolve().then(() => console.log('3')); // Micro
+console.log('4');                    // Sync
+// Output: 1, 4, 3, 2
+```
 
-// Promises (better)
+### Promise Basics
+```javascript
+// Create
 const promise = new Promise((resolve, reject) => {
-  setTimeout(() => resolve({ id: 1, name: "Alice" }), 1000);
+  if (success) resolve(value);
+  else reject(new Error('Failed'));
 });
 
-// async/await (best)
-async function getUser(id) {
-  const response = await fetch(`/api/users/${id}`);
-  return response.json();
-}
+// Chain
+fetch('/api/data')
+  .then(res => res.json())
+  .then(data => process(data))
+  .catch(err => handleError(err))
+  .finally(() => cleanup());
 ```
 
-## Understanding the Event Loop
-
-JavaScript is single-threaded but handles async via event loop:
-
-```
-1. Execute Call Stack
-2. Check Microtask Queue (Promises)
-3. Check Macrotask Queue (setTimeout)
-4. Render
-5. Repeat
-```
-
+### Async/Await
 ```javascript
-console.log("Start");
-
-setTimeout(() => {
-  console.log("Timeout");  // Macrotask (3rd)
-}, 0);
-
-Promise.resolve()
-  .then(() => {
-    console.log("Promise");  // Microtask (2nd)
-  });
-
-console.log("End");  // Call stack (1st)
-
-// Output:
-// Start
-// End
-// Promise
-// Timeout
-```
-
-## Callbacks
-
-Original async pattern (now less preferred):
-
-```javascript
-// Reading a file
-fs.readFile("data.txt", (err, data) => {
-  if (err) {
-    console.error("Error:", err);
-  } else {
-    console.log("Data:", data);
-  }
-});
-
-// Callback hell (nested callbacks)
-fs.readFile("file1.txt", (err1, data1) => {
-  if (err1) {
-    console.error(err1);
-  } else {
-    fs.readFile("file2.txt", (err2, data2) => {
-      if (err2) {
-        console.error(err2);
-      } else {
-        // Deeply nested!
-        console.log(data1, data2);
-      }
-    });
-  }
-});
-```
-
-## Promises
-
-Better async pattern with better error handling:
-
-```javascript
-// Creating a promise
-const myPromise = new Promise((resolve, reject) => {
-  const success = true;
-
-  if (success) {
-    resolve("Success!");
-  } else {
-    reject(new Error("Failed!"));
-  }
-});
-
-// Consuming promise
-myPromise
-  .then(result => console.log(result))
-  .catch(error => console.error(error))
-  .finally(() => console.log("Done"));
-
-// Promise chain
-fetch("/api/users")
-  .then(response => response.json())
-  .then(users => {
-    console.log("Users:", users);
-    return users[0].id;
-  })
-  .then(userId => fetch(`/api/users/${userId}/posts`))
-  .then(response => response.json())
-  .then(posts => console.log("Posts:", posts))
-  .catch(error => console.error("Error:", error));
-```
-
-### Promise States
-
-```javascript
-// Pending → Fulfilled
-const p1 = Promise.resolve("Success");
-
-// Pending → Rejected
-const p2 = Promise.reject(new Error("Failed"));
-
-// Custom promise
-const p3 = new Promise((resolve, reject) => {
-  setTimeout(() => {
-    resolve("Done after 1 second");
-  }, 1000);
-});
-```
-
-## async/await
-
-Modern syntax that makes async code look synchronous:
-
-```javascript
-// Basic async function
-async function getUser(id) {
-  const response = await fetch(`/api/users/${id}`);
-  const user = await response.json();
-  return user;
-}
-
-// Using async function
-const user = await getUser(1);
-console.log(user);
-
-// Error handling with try/catch
-async function getAndProcessUser(id) {
+async function fetchData() {
   try {
-    const response = await fetch(`/api/users/${id}`);
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const user = await response.json();
-    return user;
+    const response = await fetch('/api/data');
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return await response.json();
   } catch (error) {
-    console.error("Error:", error);
-    return null;
-  } finally {
-    console.log("Request completed");
-  }
-}
-
-// Parallel execution with async/await
-async function getMultipleUsers(ids) {
-  // Bad - sequential (slow)
-  const users = [];
-  for (const id of ids) {
-    users.push(await getUser(id));  // Waits for each
-  }
-
-  // Good - parallel (fast)
-  const users = await Promise.all(
-    ids.map(id => getUser(id))
-  );
-
-  return users;
-}
-```
-
-## Promise Utilities
-
-```javascript
-const p1 = Promise.resolve(1);
-const p2 = Promise.resolve(2);
-const p3 = Promise.resolve(3);
-
-// Promise.all - wait for all, reject if any fails
-Promise.all([p1, p2, p3])
-  .then(results => console.log(results));  // [1, 2, 3]
-
-// Promise.race - return first settled
-Promise.race([p1, p2, p3])
-  .then(result => console.log(result));    // 1
-
-// Promise.allSettled - all results, no rejection
-Promise.allSettled([p1, p2, p3])
-  .then(results => {
-    results.forEach((result, i) => {
-      if (result.status === 'fulfilled') {
-        console.log(`${i}: ${result.value}`);
-      }
-    });
-  });
-
-// Promise.any - first fulfilled (v13+)
-Promise.any([p1, p2, p3])
-  .then(result => console.log(result))
-  .catch(errors => console.log(errors));
-```
-
-## Async Iteration
-
-```javascript
-// Async iterator
-async function* generateUsers() {
-  for (let i = 1; i <= 3; i++) {
-    const response = await fetch(`/api/users/${i}`);
-    yield response.json();
-  }
-}
-
-// Using async iterator
-for await (const user of generateUsers()) {
-  console.log(user);
-}
-
-// Creating async iterable
-const asyncIterable = {
-  [Symbol.asyncIterator]: async function* () {
-    for (let i = 1; i <= 3; i++) {
-      yield i;
-    }
-  }
-};
-
-for await (const value of asyncIterable) {
-  console.log(value);  // 1, 2, 3
-}
-```
-
-## Real-World Patterns
-
-### API Fetching Pattern
-
-```javascript
-async function fetchWithRetry(url, maxRetries = 3) {
-  for (let i = 0; i < maxRetries; i++) {
-    try {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error(`HTTP ${response.status}`);
-      return await response.json();
-    } catch (error) {
-      if (i === maxRetries - 1) throw error;
-      // Exponential backoff
-      await new Promise(r => setTimeout(r, Math.pow(2, i) * 1000));
-    }
+    console.error('Fetch failed:', error);
+    throw error;
   }
 }
 ```
 
-### Timeout Pattern
-
+### Promise Combinators
 ```javascript
-function timeout(promise, ms) {
-  return Promise.race([
-    promise,
-    new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Timeout")), ms)
-    )
-  ]);
-}
+// All must succeed
+const [a, b, c] = await Promise.all([p1, p2, p3]);
 
-// Usage
-const data = await timeout(fetchUser(1), 5000);
+// All results (even failures)
+const results = await Promise.allSettled([p1, p2, p3]);
+results.forEach(r => {
+  if (r.status === 'fulfilled') console.log(r.value);
+  else console.log(r.reason);
+});
+
+// First to settle
+const fastest = await Promise.race([p1, p2, p3]);
+
+// First to succeed
+const firstSuccess = await Promise.any([p1, p2, p3]);
 ```
 
-### Sequential Operations
-
+### Parallel vs Sequential
 ```javascript
-async function processSequentially(items) {
-  const results = [];
-  for (const item of items) {
-    const result = await processItem(item);
-    results.push(result);
-  }
-  return results;
-}
-```
+// Sequential (slow)
+const a = await fetch('/a');
+const b = await fetch('/b');
 
-### Parallel Operations
-
-```javascript
-async function processParallel(items) {
-  return Promise.all(items.map(item => processItem(item)));
-}
-```
-
-## Common Patterns & Pitfalls
-
-### 1. Forgetting await
-
-```javascript
-// Bad - returns Promise
-async function getUser(id) {
-  const response = fetch(`/api/users/${id}`);  // No await!
-  return response.json();  // Returns Promise
-}
-
-// Good
-async function getUser(id) {
-  const response = await fetch(`/api/users/${id}`);
-  return response.json();
-}
-```
-
-### 2. Sequential instead of parallel
-
-```javascript
-// Bad - 3 seconds
-const user = await getUser(1);
-const posts = await getPosts(1);
-const comments = await getComments(1);
-
-// Good - 1 second
-const [user, posts, comments] = await Promise.all([
-  getUser(1),
-  getPosts(1),
-  getComments(1)
+// Parallel (fast)
+const [a, b] = await Promise.all([
+  fetch('/a'),
+  fetch('/b')
 ]);
 ```
 
-### 3. Not handling rejections
+## Production Patterns
 
+### Retry with Backoff
 ```javascript
-// Bad - unhandled rejection
-promise.then(result => console.log(result));
-
-// Good
-promise
-  .then(result => console.log(result))
-  .catch(error => console.error(error));
-
-// Or with async/await
-try {
-  const result = await promise;
-  console.log(result);
-} catch (error) {
-  console.error(error);
+async function fetchWithRetry(url, retries = 3) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    } catch (err) {
+      if (i === retries - 1) throw err;
+      await new Promise(r => setTimeout(r, 2 ** i * 1000));
+    }
+  }
 }
 ```
 
-## Practice Exercises
+### Timeout
+```javascript
+async function fetchWithTimeout(url, ms = 5000) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), ms);
 
-1. Chain promises to process data in sequence
-2. Create parallel Promise.all operations
-3. Handle errors with try/catch
-4. Implement retry logic with exponential backoff
-5. Use async/await for API integration
+  try {
+    const res = await fetch(url, { signal: controller.signal });
+    return await res.json();
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+```
 
-## Resources
+### Debounce
+```javascript
+function debounce(fn, delay) {
+  let timeoutId;
+  return (...args) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn(...args), delay);
+  };
+}
+```
 
-- MDN: Promise
-- MDN: async/await
-- JavaScript.info: Promise
-- JavaScript.info: async/await
+### Rate Limiter
+```javascript
+class RateLimiter {
+  constructor(limit, interval) {
+    this.tokens = limit;
+    setInterval(() => this.tokens = limit, interval);
+  }
 
-## Next Steps
+  async acquire() {
+    while (this.tokens <= 0) {
+      await new Promise(r => setTimeout(r, 100));
+    }
+    this.tokens--;
+  }
+}
+```
 
-- Practice with real APIs
-- Master error handling
-- Learn reactive libraries
-- Study performance optimization
+## Troubleshooting
+
+### Common Issues
+
+| Problem | Symptom | Fix |
+|---------|---------|-----|
+| Unhandled rejection | Console warning | Add `.catch()` or try/catch |
+| Sequential instead of parallel | Slow execution | Use `Promise.all()` |
+| Missing `await` | Promise instead of value | Add `await` |
+| Race condition | Inconsistent results | Use proper sequencing |
+
+### Debug Checklist
+```javascript
+// 1. Add timing
+console.time('fetch');
+await fetchData();
+console.timeEnd('fetch');
+
+// 2. Log promise state
+promise.then(console.log).catch(console.error);
+
+// 3. Check for missing await
+const result = fetchData();
+console.log(result); // Promise? Add await!
+
+// 4. Trace async chain
+async function debug() {
+  console.log('Step 1');
+  const a = await step1();
+  console.log('Step 2', a);
+  const b = await step2(a);
+  console.log('Done', b);
+}
+```
+
+### Error Handling Pattern
+```javascript
+// Wrapper for tuple return
+async function safeAsync(promise) {
+  try {
+    return [await promise, null];
+  } catch (error) {
+    return [null, error];
+  }
+}
+
+const [data, error] = await safeAsync(fetchData());
+if (error) handleError(error);
+```
+
+## Related
+
+- **Agent 04**: Asynchronous JavaScript (detailed learning)
+- **Skill: functions**: Callbacks and closures
+- **Skill: ecosystem**: API integration

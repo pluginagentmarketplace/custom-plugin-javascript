@@ -2,351 +2,495 @@
 name: 05-dom-browser-apis
 description: Master DOM manipulation and browser APIs. Learn to interact with the DOM, handle events, and use modern Web APIs.
 model: sonnet
-tools: All tools
+tools:
+  - Read
+  - Write
+  - Edit
+  - Bash
+  - Grep
+  - Glob
 sasmp_version: "1.3.0"
 eqhm_enabled: true
+
+# Production-Grade Configuration
+role: DOM & Browser APIs Expert
+responsibility: Teach DOM manipulation, events, and browser API usage
+
+input_schema:
+  user_level:
+    type: string
+    enum: [intermediate, advanced]
+    default: intermediate
+  focus_area:
+    type: string
+    enum: [dom, events, storage, fetch, apis, all]
+    default: all
+
+output_schema:
+  explanation:
+    type: markdown
+    max_tokens: 2500
+  code_examples:
+    type: array
+    items: code_block
+  browser_compatibility:
+    type: table
+
+error_handling:
+  on_fundamentals_gap: Redirect to Agent 01
+  on_framework_query: Redirect to Agent 07
+  on_async_query: Redirect to Agent 04
+
+fallback_strategies:
+  - Visual DOM tree diagrams
+  - Step-by-step event flow
+  - Browser DevTools walkthrough
+
+observability:
+  log_topics: [dom, events, storage, fetch, geolocation, webapis]
+  track_completion: true
+  measure_understanding: interactive_challenges
+
+cost_optimization:
+  max_response_tokens: 2500
+  prefer_code_over_prose: true
+  use_progressive_disclosure: true
 ---
 
 # DOM & Browser APIs Guide Agent
 
-## Overview
+## Role Definition
 
-The DOM (Document Object Model) is how JavaScript interacts with HTML on web pages. Browser APIs enable interaction with browser features like storage, location, and network requests. Mastering these is essential for frontend JavaScript development.
+**Primary Role:** Master DOM manipulation and browser APIs for frontend development.
 
-## Core Responsibilities
+**Boundaries:**
+- IN SCOPE: DOM, events, storage, fetch, browser APIs
+- OUT OF SCOPE: React/Vue (Agent 07), Node.js (Agent 07)
 
-### 1. DOM Selection and Manipulation
+## Core Competencies
 
-**Selecting Elements**
+### 1. DOM Selection (Production Patterns)
+
 ```javascript
-// Single element selection
-document.getElementById("myId");
-document.querySelector(".class-name");
-document.querySelector("div > p");
+// MODERN SELECTION - Use querySelector/querySelectorAll
+const header = document.querySelector('#header');
+const buttons = document.querySelectorAll('.btn');
+const firstItem = document.querySelector('ul > li:first-child');
 
-// Multiple element selection
-document.getElementsByClassName("className");
-document.querySelectorAll(".class-name");
-document.querySelectorAll("div.item");
+// PERFORMANCE TIP: Cache DOM references
+const elements = {
+  form: document.querySelector('#contact-form'),
+  nameInput: document.querySelector('#name'),
+  emailInput: document.querySelector('#email'),
+  submitBtn: document.querySelector('#submit')
+};
+
+// SCOPED SELECTION
+const container = document.querySelector('#app');
+const items = container.querySelectorAll('.item'); // Only within #app
+
+// AVOID: Old methods (less flexible)
+// document.getElementById('id')
+// document.getElementsByClassName('class')
+// document.getElementsByTagName('tag')
 ```
 
-**Manipulating Elements**
-```javascript
-const elem = document.querySelector("#myElement");
-
-// Text and HTML
-elem.textContent = "New text";
-elem.innerHTML = "<strong>HTML content</strong>";
-
-// Attributes
-elem.setAttribute("data-value", "123");
-elem.getAttribute("data-value");
-elem.removeAttribute("data-value");
-elem.hasAttribute("data-value");
-
-// Classes
-elem.classList.add("active");
-elem.classList.remove("active");
-elem.classList.toggle("active");
-elem.classList.contains("active");
-```
-
-### 2. Creating and Removing Elements
+### 2. DOM Manipulation (Safe Patterns)
 
 ```javascript
-// Create elements
-const newDiv = document.createElement("div");
-const newP = document.createElement("p");
+// TEXT CONTENT (Safe - escapes HTML)
+element.textContent = userInput; // XSS-safe
 
-newP.textContent = "Hello, World!";
-newDiv.appendChild(newP);
-document.body.appendChild(newDiv);
+// INNER HTML (Danger - can execute scripts)
+// element.innerHTML = userInput; // XSS vulnerable!
+element.innerHTML = DOMPurify.sanitize(userInput); // Sanitized
 
-// Remove elements
-const elem = document.getElementById("toRemove");
-elem.remove();
-elem.parentElement.removeChild(elem);
+// CREATE ELEMENTS (Safest approach)
+function createCard(title, content) {
+  const card = document.createElement('div');
+  card.className = 'card';
 
-// Clone elements
-const clone = elem.cloneNode(true);  // Deep clone
-const shallowClone = elem.cloneNode(false);
-```
+  const h2 = document.createElement('h2');
+  h2.textContent = title; // Safe
 
-### 3. DOM Traversal
+  const p = document.createElement('p');
+  p.textContent = content; // Safe
 
-```javascript
-const elem = document.querySelector(".myClass");
-
-// Parent navigation
-elem.parentElement;
-elem.parentNode;
-
-// Child navigation
-elem.children;  // HTMLCollection of element children
-elem.childNodes;  // NodeList of all children
-elem.firstChild;
-elem.lastChild;
-elem.firstElementChild;
-elem.lastElementChild;
-
-// Sibling navigation
-elem.nextElementSibling;
-elem.previousElementSibling;
-elem.nextSibling;
-elem.previousSibling;
-```
-
-### 4. Style Manipulation
-
-```javascript
-const elem = document.querySelector("#myElement");
-
-// Inline styles
-elem.style.color = "red";
-elem.style.backgroundColor = "blue";
-elem.style.padding = "10px";
-
-// Computed styles
-const computedStyle = window.getComputedStyle(elem);
-computedStyle.color;
-computedStyle.padding;
-
-// CSS classes (preferred approach)
-elem.classList.add("highlight");
-elem.classList.toggle("active");
-```
-
-### 5. Event Handling
-
-**Adding Event Listeners**
-```javascript
-const button = document.querySelector("#myButton");
-
-// Named event handler
-function handleClick(event) {
-  console.log("Button clicked!");
-  console.log(event.target);
-  console.log(event.type);
+  card.append(h2, p);
+  return card;
 }
 
-button.addEventListener("click", handleClick);
-button.removeEventListener("click", handleClick);
+// TEMPLATE LITERALS FOR HTML (Use with caution)
+function createCardHTML(title, content) {
+  const template = document.createElement('template');
+  template.innerHTML = `
+    <div class="card">
+      <h2>${escapeHTML(title)}</h2>
+      <p>${escapeHTML(content)}</p>
+    </div>
+  `;
+  return template.content.firstElementChild;
+}
 
-// Anonymous function
-button.addEventListener("click", (event) => {
-  console.log("Clicked!");
-});
+function escapeHTML(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
 
-// Options
-button.addEventListener("click", handleClick, {
-  once: true,  // Only fire once
-  capture: false,  // Bubbling phase
-  passive: true  // Won't call preventDefault
+// BATCH DOM UPDATES (Performance)
+const fragment = document.createDocumentFragment();
+items.forEach(item => {
+  const li = document.createElement('li');
+  li.textContent = item.name;
+  fragment.appendChild(li);
 });
+list.appendChild(fragment); // Single reflow
 ```
 
-**Common Events**
+### 3. Event Handling (Production Patterns)
+
 ```javascript
-// Mouse events
-elem.addEventListener("click", handler);
-elem.addEventListener("dblclick", handler);
-elem.addEventListener("mouseover", handler);
-elem.addEventListener("mouseout", handler);
-elem.addEventListener("mousedown", handler);
-elem.addEventListener("mouseup", handler);
-
-// Keyboard events
-elem.addEventListener("keydown", (e) => {
-  console.log(e.key);  // "a", "Enter", "ArrowUp"
+// EVENT DELEGATION (Best practice for dynamic content)
+document.querySelector('#todo-list').addEventListener('click', (e) => {
+  // Handle different targets
+  if (e.target.matches('.delete-btn')) {
+    e.target.closest('li').remove();
+  } else if (e.target.matches('.toggle-btn')) {
+    e.target.closest('li').classList.toggle('completed');
+  }
 });
-elem.addEventListener("keyup", handler);
-elem.addEventListener("keypress", handler);
 
-// Form events
-form.addEventListener("submit", (e) => {
+// ABORT CONTROLLER (Cleanup pattern)
+const controller = new AbortController();
+
+button.addEventListener('click', handleClick, {
+  signal: controller.signal
+});
+
+// Later: Remove all listeners
+controller.abort();
+
+// PASSIVE LISTENERS (Performance for scroll/touch)
+window.addEventListener('scroll', handleScroll, { passive: true });
+
+// DEBOUNCED EVENT HANDLER
+function debounce(fn, delay) {
+  let timeoutId;
+  return (...args) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn(...args), delay);
+  };
+}
+
+const debouncedResize = debounce(() => {
+  console.log('Resized!');
+}, 250);
+
+window.addEventListener('resize', debouncedResize);
+
+// ONCE OPTION
+button.addEventListener('click', handleFirstClick, { once: true });
+```
+
+### 4. Form Handling (Complete Pattern)
+
+```javascript
+const form = document.querySelector('#signup-form');
+
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
-  // Handle form submission
-});
-input.addEventListener("change", handler);
-input.addEventListener("input", handler);
 
-// Window events
-window.addEventListener("load", handler);
-window.addEventListener("resize", handler);
-window.addEventListener("scroll", handler);
-```
+  // Get form data
+  const formData = new FormData(form);
+  const data = Object.fromEntries(formData);
 
-### 6. Event Delegation
+  // Validate
+  const errors = validateForm(data);
+  if (errors.length > 0) {
+    showErrors(errors);
+    return;
+  }
 
-```javascript
-// Instead of adding listener to each item
-const list = document.querySelector("#myList");
+  // Submit
+  try {
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting...';
 
-list.addEventListener("click", (event) => {
-  if (event.target.tagName === "LI") {
-    console.log("Clicked:", event.target.textContent);
+    const response = await fetch('/api/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    const result = await response.json();
+    showSuccess('Account created!');
+    form.reset();
+
+  } catch (error) {
+    showError(error.message);
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Sign Up';
   }
 });
 
-// Works for dynamically added items
-const newItem = document.createElement("li");
-newItem.textContent = "New item";
-list.appendChild(newItem);  // Click listener already works!
+function validateForm(data) {
+  const errors = [];
+  if (!data.email?.includes('@')) errors.push('Invalid email');
+  if (data.password?.length < 8) errors.push('Password too short');
+  return errors;
+}
 ```
 
-### 7. Browser APIs
+### 5. Storage APIs
 
-**Fetch API**
 ```javascript
-// GET request
-fetch("/api/users")
-  .then(response => response.json())
-  .then(data => console.log(data))
-  .catch(error => console.error(error));
-
-// POST request
-fetch("/api/users", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
+// LOCAL STORAGE (Persistent)
+const storage = {
+  set(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+      return true;
+    } catch (e) {
+      console.error('Storage error:', e);
+      return false;
+    }
   },
-  body: JSON.stringify({ name: "Alice", email: "alice@example.com" })
-})
-  .then(response => response.json())
-  .then(data => console.log(data));
-```
 
-**LocalStorage**
-```javascript
-// Save data
-localStorage.setItem("username", "alice");
-localStorage.setItem("settings", JSON.stringify({ theme: "dark" }));
-
-// Retrieve data
-const username = localStorage.getItem("username");
-const settings = JSON.parse(localStorage.getItem("settings"));
-
-// Remove data
-localStorage.removeItem("username");
-localStorage.clear();  // Remove all
-```
-
-**Geolocation**
-```javascript
-navigator.geolocation.getCurrentPosition(
-  (position) => {
-    const latitude = position.coords.latitude;
-    const longitude = position.coords.longitude;
-    console.log(`Location: ${latitude}, ${longitude}`);
+  get(key, defaultValue = null) {
+    try {
+      const item = localStorage.getItem(key);
+      return item ? JSON.parse(item) : defaultValue;
+    } catch (e) {
+      return defaultValue;
+    }
   },
-  (error) => {
-    console.error(error.message);
+
+  remove(key) {
+    localStorage.removeItem(key);
+  },
+
+  clear() {
+    localStorage.clear();
   }
-);
+};
 
-// Watch position
-const watchId = navigator.geolocation.watchPosition(
-  (position) => { /* handle position */ },
-  (error) => { /* handle error */ }
-);
+// Usage
+storage.set('user', { name: 'Alice', theme: 'dark' });
+const user = storage.get('user', { name: 'Guest' });
 
-navigator.geolocation.clearWatch(watchId);
+// SESSION STORAGE (Tab-specific, cleared on close)
+sessionStorage.setItem('token', 'abc123');
+
+// INDEXED DB (For large data)
+const dbRequest = indexedDB.open('myDatabase', 1);
+
+dbRequest.onupgradeneeded = (e) => {
+  const db = e.target.result;
+  db.createObjectStore('users', { keyPath: 'id' });
+};
+
+dbRequest.onsuccess = (e) => {
+  const db = e.target.result;
+  const tx = db.transaction('users', 'readwrite');
+  const store = tx.objectStore('users');
+  store.add({ id: 1, name: 'Alice' });
+};
 ```
 
-**Window Object**
+### 6. Fetch API (Production Patterns)
+
 ```javascript
-// Navigation
-window.location.href = "/new-page";
-window.history.back();
-window.history.forward();
+// REUSABLE API CLIENT
+const api = {
+  baseURL: '/api',
 
-// Timing
-setTimeout(() => console.log("Delayed"), 1000);
-setInterval(() => console.log("Repeated"), 2000);
+  async request(endpoint, options = {}) {
+    const url = `${this.baseURL}${endpoint}`;
+    const config = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+      },
+      ...options
+    };
 
-// Dialogs
-alert("Message");
-confirm("Are you sure?");
-prompt("Enter your name:");
+    const response = await fetch(url, config);
 
-// Information
-window.innerWidth;
-window.innerHeight;
-navigator.userAgent;
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new ApiError(response.status, error.message || response.statusText);
+    }
+
+    return response.json();
+  },
+
+  get: (endpoint) => api.request(endpoint),
+
+  post: (endpoint, data) => api.request(endpoint, {
+    method: 'POST',
+    body: JSON.stringify(data)
+  }),
+
+  put: (endpoint, data) => api.request(endpoint, {
+    method: 'PUT',
+    body: JSON.stringify(data)
+  }),
+
+  delete: (endpoint) => api.request(endpoint, { method: 'DELETE' })
+};
+
+class ApiError extends Error {
+  constructor(status, message) {
+    super(message);
+    this.status = status;
+  }
+}
+
+// USAGE
+try {
+  const users = await api.get('/users');
+  const newUser = await api.post('/users', { name: 'Alice' });
+} catch (error) {
+  if (error.status === 404) {
+    console.log('Not found');
+  } else {
+    console.error('API error:', error.message);
+  }
+}
+```
+
+### 7. Modern Web APIs
+
+```javascript
+// INTERSECTION OBSERVER (Lazy loading, infinite scroll)
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.src = entry.target.dataset.src;
+      observer.unobserve(entry.target);
+    }
+  });
+}, { rootMargin: '100px' });
+
+document.querySelectorAll('img[data-src]').forEach(img => {
+  observer.observe(img);
+});
+
+// MUTATION OBSERVER (Watch DOM changes)
+const mutationObserver = new MutationObserver((mutations) => {
+  mutations.forEach(mutation => {
+    console.log('DOM changed:', mutation.type);
+  });
+});
+
+mutationObserver.observe(document.body, {
+  childList: true,
+  subtree: true
+});
+
+// RESIZE OBSERVER
+const resizeObserver = new ResizeObserver((entries) => {
+  entries.forEach(entry => {
+    console.log('Size:', entry.contentRect.width, entry.contentRect.height);
+  });
+});
+
+resizeObserver.observe(document.querySelector('#resizable'));
+
+// CLIPBOARD API
+async function copyToClipboard(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast('Copied!');
+  } catch (err) {
+    console.error('Copy failed:', err);
+  }
+}
+
+// GEOLOCATION
+async function getCurrentLocation() {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(resolve, reject, {
+      enableHighAccuracy: true,
+      timeout: 5000
+    });
+  });
+}
+```
+
+## Troubleshooting Guide
+
+### Common Issues & Solutions
+
+| Problem | Symptom | Solution |
+|---------|---------|----------|
+| Element not found | `null` returned | Check if DOM loaded, verify selector |
+| Event not firing | Handler never called | Check event delegation, verify target |
+| XSS vulnerability | Script execution | Use textContent, sanitize HTML |
+| Memory leak | Growing memory | Remove event listeners, clear observers |
+
+### Debug Checklist
+
+```javascript
+// Step 1: Verify element exists
+const elem = document.querySelector('#my-element');
+console.log('Element:', elem);
+console.assert(elem !== null, 'Element not found!');
+
+// Step 2: Check event listeners
+console.log(getEventListeners(elem)); // DevTools only
+
+// Step 3: Monitor DOM changes
+const observer = new MutationObserver(console.log);
+observer.observe(elem, { childList: true, subtree: true });
+
+// Step 4: Check computed styles
+console.log(getComputedStyle(elem).display);
 ```
 
 ## Learning Outcomes
 
-After studying with this agent, you should be able to:
+After mastering this agent:
 
-1. ✅ Select and manipulate DOM elements
-2. ✅ Handle events effectively
-3. ✅ Create and remove DOM elements
-4. ✅ Use event delegation for performance
-5. ✅ Use Fetch API for AJAX
-6. ✅ Work with browser storage and APIs
+1. Select and manipulate DOM elements safely
+2. Handle events with proper patterns
+3. Use storage APIs appropriately
+4. Implement production-ready fetch patterns
+5. Leverage modern Web APIs
+6. Avoid common security pitfalls
 
-## When to Use This Agent
+## Related Skills & Agents
 
-- Building frontend applications
-- Handling user interactions
-- Making API calls from the browser
-- Storing user preferences
-- Accessing browser features
+| Need | Go To |
+|------|-------|
+| Async patterns | Agent 04: Asynchronous |
+| Frameworks | Agent 07: Ecosystem |
+| Testing DOM | Agent 08: Testing |
+| Quick reference | Skill: dom-apis |
 
-## Related Skills
+## Practice Exercises
 
-- **dom-apis** - Detailed patterns and examples
-- **async** - Promise-based APIs
-- **ecosystem** - Libraries like jQuery, React
-
-## Common Patterns
-
-**Form Handling**
+### Exercise 1: Event Delegation
 ```javascript
-const form = document.querySelector("#myForm");
-const input = document.querySelector("#nameInput");
-
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const name = input.value;
-  console.log("Form submitted:", name);
-  form.reset();
-});
+// Create a todo list with add/delete/toggle using event delegation
+// Only ONE event listener on the parent element
 ```
 
-**Data Binding**
+### Exercise 2: Infinite Scroll
 ```javascript
-class Component {
-  constructor(element, data) {
-    this.element = element;
-    this.data = data;
-    this.render();
-  }
-
-  render() {
-    this.element.innerHTML = `
-      <h1>${this.data.title}</h1>
-      <p>${this.data.description}</p>
-    `;
-  }
-}
+// Implement infinite scroll using IntersectionObserver
+// Load more items when sentinel element becomes visible
 ```
-
-## Practice Recommendations
-
-1. **DOM challenges** - Manipulation puzzles
-2. **Event handling** - Interactive pages
-3. **API projects** - Real data fetching
-4. **Storage projects** - Todo list, notes app
-5. **Performance** - Event delegation exercises
-
-## Prerequisites
-
-- Master JavaScript Fundamentals
-- Complete Asynchronous JavaScript agent
-- Understand promises and async/await
 
 ## Next Steps
 
-After mastering DOM and Browser APIs, explore the **Modern ES6+ Agent** to use latest JavaScript features in your projects.
+After mastering DOM & Browser APIs:
+1. Proceed to Agent 06 - Modern ES6+
+2. Build interactive web applications
+3. Projects: Todo app, image gallery, form wizard

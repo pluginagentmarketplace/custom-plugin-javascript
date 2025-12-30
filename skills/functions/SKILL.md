@@ -2,400 +2,191 @@
 name: functions
 description: Advanced function patterns including declaration styles, closures, scope chains, hoisting, and this binding. Master function composition and advanced techniques.
 sasmp_version: "1.3.0"
-bonded_agent: 01-javascript-fundamentals
+bonded_agent: 02-functions-scope
 bond_type: PRIMARY_BOND
+
+# Production-Grade Configuration
+skill_type: reference
+response_format: code_first
+max_tokens: 1500
+
+parameter_validation:
+  required: [topic]
+  optional: [pattern_type]
+
+retry_logic:
+  on_ambiguity: ask_clarification
+  fallback: show_common_patterns
+
+observability:
+  entry_log: "Functions skill activated"
+  exit_log: "Function reference provided"
 ---
 
 # Functions & Scope Skill
 
-## Quick Start
+## Quick Reference Card
 
-Functions are reusable blocks of code. Master different declaration styles and understand how scope works:
-
+### Function Styles
 ```javascript
-// Function declaration
-function greet(name) {
-  return `Hello, ${name}!`;
-}
+// Declaration (hoisted)
+function greet(name) { return `Hello, ${name}!`; }
 
-// Function expression
-const add = function(a, b) {
-  return a + b;
-};
+// Expression (not hoisted)
+const greet = function(name) { return `Hello, ${name}!`; };
 
-// Arrow function
-const multiply = (a, b) => a * b;
-
-// Calling functions
-greet("Alice");      // "Hello, Alice!"
-add(5, 3);          // 8
-multiply(4, 5);     // 20
+// Arrow (lexical this)
+const greet = (name) => `Hello, ${name}!`;
+const greet = name => `Hello, ${name}!`;  // Single param
+const getUser = async (id) => await fetch(`/api/${id}`);
 ```
 
-## Function Declaration vs Expression
-
-### Function Declaration
-
-```javascript
-function sayHello() {
-  return "Hello!";
-}
-
-// Can be called before declaration (hoisting)
-console.log(sayHello());  // "Hello!"
-
-function sayHello() {
-  return "Hello!";
-}
+### Scope Rules
+```
+Global Scope
+  └── Function Scope
+        └── Block Scope (let/const)
 ```
 
-### Function Expression
-
 ```javascript
-const sayHello = function() {
-  return "Hello!";
-};
+const global = 'accessible everywhere';
 
-// Cannot be called before assignment
-// console.log(sayHello());  // Error!
-const sayHello = function() {
-  return "Hello!";
-};
-```
-
-### Named Function Expression
-
-```javascript
-const factorial = function fact(n) {
-  if (n <= 1) return 1;
-  return n * fact(n - 1);  // Can call itself
-};
-
-factorial(5);   // 120
-// fact(5);     // Error: 'fact' not accessible outside
-```
-
-## Arrow Functions
-
-```javascript
-// Regular arrow function
-const add = (a, b) => {
-  return a + b;
-};
-
-// Concise arrow function (implicit return)
-const add = (a, b) => a + b;
-
-// Single parameter (optional parentheses)
-const square = x => x * x;
-const double = x => x * 2;
-
-// No parameters
-const getRandom = () => Math.random();
-
-// Arrow functions don't have their own 'this'
-const person = {
-  name: "Alice",
-  greet: function() {
-    return () => `Hello, I'm ${this.name}`;  // 'this' from outer
-  }
-};
-
-const greet = person.greet();
-greet();  // "Hello, I'm Alice"
-```
-
-## Understanding Scope
-
-### Global Scope
-
-```javascript
-const globalVar = "I'm global";
-
-function showVar() {
-  console.log(globalVar);  // Can access
-}
-
-showVar();  // "I'm global"
-```
-
-### Function Scope
-
-```javascript
 function outer() {
-  const outerVar = "outer";
+  const outerVar = 'accessible in outer + inner';
 
   function inner() {
-    const innerVar = "inner";
-    console.log(outerVar);  // Can access outer
-    console.log(innerVar);  // Can access own
+    const innerVar = 'only accessible here';
+    console.log(global, outerVar, innerVar); // All work
   }
-
-  inner();
-  // console.log(innerVar);  // Error: innerVar not accessible
 }
-
-outer();
 ```
 
-### Block Scope (let/const)
-
+### Closure Pattern
 ```javascript
-if (true) {
-  const blockVar = "block";
-  let blockLet = "let";
-  console.log(blockVar);  // "block"
-}
-
-// console.log(blockVar);  // Error!
-// console.log(blockLet);  // Error!
-
-// var ignores block scope
-if (true) {
-  var globalLikeVar = "global-like";
-}
-console.log(globalLikeVar);  // "global-like"
-```
-
-## Closure
-
-A closure is a function that has access to variables from its outer scope:
-
-```javascript
-// Simple closure
 function createCounter() {
-  let count = 0;
+  let count = 0;  // Private state
 
-  return function() {
-    count++;
-    return count;
+  return {
+    increment: () => ++count,
+    decrement: () => --count,
+    get: () => count
   };
 }
 
 const counter = createCounter();
-console.log(counter());  // 1
-console.log(counter());  // 2
-console.log(counter());  // 3
-
-// Each counter has its own scope
-const counter2 = createCounter();
-console.log(counter2());  // 1
+counter.increment(); // 1
+counter.increment(); // 2
 ```
 
-### Closure with Multiple Functions
+### This Binding Rules
+| Context | `this` Value |
+|---------|--------------|
+| Global | `window`/`global` |
+| Object method | The object |
+| Arrow function | Lexical (outer) |
+| `call/apply/bind` | Explicit value |
+| Constructor (`new`) | New instance |
 
 ```javascript
-function createBankAccount(initialBalance) {
-  let balance = initialBalance;
-
-  return {
-    deposit(amount) {
-      balance += amount;
-      return balance;
-    },
-    withdraw(amount) {
-      if (amount > balance) return "Insufficient funds";
-      balance -= amount;
-      return balance;
-    },
-    getBalance() {
-      return balance;
-    }
-  };
-}
-
-const account = createBankAccount(1000);
-console.log(account.deposit(500));      // 1500
-console.log(account.withdraw(200));     // 1300
-console.log(account.getBalance());      // 1300
+// Explicit binding
+fn.call(thisArg, arg1, arg2);
+fn.apply(thisArg, [args]);
+const bound = fn.bind(thisArg);
 ```
 
-## Hoisting
-
-### Function Declaration Hoisting
-
+### Advanced Patterns
 ```javascript
-console.log(greet("Alice"));  // "Hello, Alice!" (works!)
-
-function greet(name) {
-  return `Hello, ${name}!`;
-}
-```
-
-### Variable Hoisting
-
-```javascript
-console.log(x);  // undefined (not ReferenceError)
-var x = 5;
-console.log(x);  // 5
-
-// With let/const (Temporal Dead Zone)
-// console.log(y);  // ReferenceError
-let y = 10;
-console.log(y);  // 10
-```
-
-## The 'this' Context
-
-### this in Different Contexts
-
-```javascript
-// Global context
-function showThis() {
-  console.log(this);  // Window object (browser)
-}
-
-// Method context
-const person = {
-  name: "Alice",
-  greet() {
-    console.log(this);  // person object
-    console.log(this.name);  // "Alice"
-  }
-};
-
-person.greet();
-
-// Constructor context
-function Person(name) {
-  this.name = name;
-}
-
-const alice = new Person("Alice");
-console.log(alice.name);  // "Alice"
-```
-
-## Function Methods: call, apply, bind
-
-```javascript
-const person = {
-  name: "Alice",
-  greet(greeting) {
-    return `${greeting}, ${this.name}!`;
-  }
-};
-
-// call - invoke with specific 'this'
-person.greet.call({ name: "Bob" }, "Hello");  // "Hello, Bob!"
-
-// apply - like call, but array of args
-person.greet.apply({ name: "Charlie" }, ["Hi"]);  // "Hi, Charlie!"
-
-// bind - create new function with fixed 'this'
-const greetBob = person.greet.bind({ name: "Bob" });
-greetBob("Hey");  // "Hey, Bob!"
-```
-
-## Advanced Function Patterns
-
-### Immediately Invoked Function Expression (IIFE)
-
-```javascript
-(function() {
-  const privateVar = "private";
-  console.log(privateVar);
+// IIFE (Immediately Invoked)
+const module = (function() {
+  const private = 'hidden';
+  return { getPrivate: () => private };
 })();
 
-// console.log(privateVar);  // Error: not accessible
-```
+// Currying
+const multiply = a => b => a * b;
+const double = multiply(2);
+double(5); // 10
 
-### Function Composition
-
-```javascript
-const compose = (f, g) => x => f(g(x));
-
-const addOne = x => x + 1;
-const double = x => x * 2;
-
-const addOneThenDouble = compose(double, addOne);
-addOneThenDouble(5);  // double(addOne(5)) = double(6) = 12
-```
-
-### Currying
-
-```javascript
-// Transform function to take args one at a time
-const curry = (fn) => {
-  const arity = fn.length;
-  return function $curry(...args) {
-    if (args.length < arity) {
-      return (...nextArgs) => $curry(...args, ...nextArgs);
-    }
-    return fn(...args);
-  };
-};
-
-const add = (a, b, c) => a + b + c;
-const curriedAdd = curry(add);
-
-curriedAdd(1)(2)(3);    // 6
-curriedAdd(1, 2)(3);    // 6
-```
-
-### Memoization
-
-```javascript
+// Memoization
 function memoize(fn) {
-  const cache = {};
-
-  return function(...args) {
+  const cache = new Map();
+  return (...args) => {
     const key = JSON.stringify(args);
-    if (key in cache) {
-      return cache[key];
-    }
-    const result = fn(...args);
-    cache[key] = result;
-    return result;
+    if (!cache.has(key)) cache.set(key, fn(...args));
+    return cache.get(key);
+  };
+}
+```
+
+## Troubleshooting
+
+### Common Issues
+
+| Problem | Symptom | Fix |
+|---------|---------|-----|
+| Lost `this` | `undefined` or wrong value | Use arrow fn or `.bind()` |
+| Closure loop bug | All callbacks same value | Use `let` not `var` |
+| Hoisting confusion | Undefined before declaration | Declare at top |
+| TDZ error | ReferenceError | Move `let`/`const` before use |
+
+### The Classic Loop Bug
+```javascript
+// BUG: var is function-scoped
+for (var i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 100);
+}
+// Output: 3, 3, 3
+
+// FIX: Use let (block-scoped)
+for (let i = 0; i < 3; i++) {
+  setTimeout(() => console.log(i), 100);
+}
+// Output: 0, 1, 2
+```
+
+### Debug Checklist
+```javascript
+// 1. Check this context
+console.log('this is:', this);
+
+// 2. Verify closure captures
+function test() {
+  let x = 1;
+  return () => { console.log('x:', x); };
+}
+
+// 3. Check hoisting
+console.log(typeof myFunc); // 'function' or 'undefined'?
+```
+
+## Production Patterns
+
+### Factory Pattern
+```javascript
+function createLogger(prefix) {
+  return {
+    log: (msg) => console.log(`[${prefix}] ${msg}`),
+    error: (msg) => console.error(`[${prefix}] ${msg}`)
   };
 }
 
-const expensiveSum = (a, b) => {
-  console.log("Computing...");
-  return a + b;
-};
-
-const memoizedSum = memoize(expensiveSum);
-memoizedSum(2, 3);  // "Computing..." → 5
-memoizedSum(2, 3);  // 5 (from cache, no log)
+const apiLogger = createLogger('API');
+apiLogger.log('Request received');
 ```
 
-## Practice Exercises
-
-1. Create a closure that tracks how many times a function was called
-2. Write a function that returns an object with methods that share private state
-3. Implement a simple currying function
-4. Create an IIFE that initializes application state
-
-## Common Pitfalls
-
-**1. Lost 'this' context**
+### Debounce/Throttle
 ```javascript
-const obj = {
-  name: "Alice",
-  getGreeting: function() {
-    return () => this.name;  // Use arrow function to capture 'this'
-  }
-};
+function debounce(fn, delay) {
+  let timeoutId;
+  return (...args) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => fn(...args), delay);
+  };
+}
 ```
 
-**2. Callback hell**
-```javascript
-// Instead of nested callbacks, use promises or async/await
-fetchUser()
-  .then(user => fetchPosts(user.id))
-  .then(posts => renderPosts(posts))
-  .catch(error => console.error(error));
-```
+## Related
 
-## Resources
-
-- MDN: Functions
-- JavaScript.info: Functions
-- Eloquent JavaScript: Functions chapter
-
-## Next Steps
-
-- Master closures through exercises
-- Study scope chain deeply
-- Learn callback functions
-- Move to async patterns
+- **Agent 02**: Functions & Scope (detailed learning)
+- **Skill: fundamentals**: Variables and basics
+- **Skill: asynchronous**: Async functions

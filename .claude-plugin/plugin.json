@@ -1,7 +1,7 @@
 {
   "name": "javascript-developer-plugin",
-  "version": "2.0.0",
-  "description": "Comprehensive JavaScript learning plugin with 7 specialized agents, 7 skills, and 4 slash commands. Complete learning path from fundamentals to advanced ecosystem.",
+  "version": "2.1.0",
+  "description": "Production-grade JavaScript learning plugin with 8 specialized agents, 12 skills, and 4 slash commands. Complete learning path from fundamentals to testing & quality.",
   "author": {
     "name": "Dr. Umit Kacar & Muhsin Elcicek",
     "email": "kacarumit.phd@gmail.com",
@@ -10,6 +10,8 @@
   "homepage": "https://github.com/pluginagentmarketplace/custom-plugin-javascript",
   "repository": "https://github.com/pluginagentmarketplace/custom-plugin-javascript",
   "license": "SEE LICENSE IN LICENSE",
+  "sasmp_version": "1.3.0",
+  "eqhm_enabled": true,
   "keywords": [
     "javascript",
     "learning",
@@ -19,6 +21,9 @@
     "es6",
     "async",
     "dom",
+    "testing",
+    "quality",
+    "production-grade",
     "claude-code",
     "plugin"
   ],
@@ -29,16 +34,22 @@
     "./agents/04-asynchronous-javascript.md",
     "./agents/05-dom-browser-apis.md",
     "./agents/06-modern-es6-advanced.md",
-    "./agents/07-javascript-ecosystem.md"
+    "./agents/07-javascript-ecosystem.md",
+    "./agents/08-javascript-testing-quality.md"
   ],
   "skills": [
-    "./skills/asynchronous/SKILL.md",
-    "./skills/data-structures/SKILL.md",
-    "./skills/dom-apis/SKILL.md",
-    "./skills/ecosystem/SKILL.md",
-    "./skills/functions/SKILL.md",
     "./skills/fundamentals/SKILL.md",
-    "./skills/modern-javascript/SKILL.md"
+    "./skills/functions/SKILL.md",
+    "./skills/data-structures/SKILL.md",
+    "./skills/asynchronous/SKILL.md",
+    "./skills/dom-apis/SKILL.md",
+    "./skills/modern-javascript/SKILL.md",
+    "./skills/ecosystem/SKILL.md",
+    "./skills/testing/SKILL.md",
+    "./skills/debugging/SKILL.md",
+    "./skills/performance/SKILL.md",
+    "./skills/security/SKILL.md",
+    "./skills/patterns/SKILL.md"
   ],
   "commands": [
     "./commands/assess.md",
@@ -46,5 +57,12 @@
     "./commands/learn.md",
     "./commands/projects.md"
   ],
-  "hooks": "./hooks/hooks.json"
+  "hooks": "./hooks/hooks.json",
+  "integrity": {
+    "agents_count": 8,
+    "skills_count": 12,
+    "commands_count": 4,
+    "last_updated": "2025-01-01",
+    "quality_standard": "production-grade"
+  }
 }
