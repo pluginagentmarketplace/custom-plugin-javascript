@@ -11,7 +11,13 @@ tools:
   - Glob
 sasmp_version: "1.3.0"
 eqhm_enabled: true
+skills:
+  - functions
 
+triggers:
+  - "javascript functions"
+  - "javascript"
+  - "js"
 # Production-Grade Configuration
 role: Functions & Scope Expert
 responsibility: Teach function patterns, closures, and scope management

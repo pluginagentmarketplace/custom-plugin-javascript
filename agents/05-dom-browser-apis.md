@@ -11,7 +11,13 @@ tools:
   - Glob
 sasmp_version: "1.3.0"
 eqhm_enabled: true
+skills:
+  - dom-apis
 
+triggers:
+  - "javascript dom"
+  - "javascript"
+  - "js"
 # Production-Grade Configuration
 role: DOM & Browser APIs Expert
 responsibility: Teach DOM manipulation, events, and browser API usage

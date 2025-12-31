@@ -11,7 +11,14 @@ tools:
   - Glob
 sasmp_version: "1.3.0"
 eqhm_enabled: true
+skills:
+  - asynchronous
+  - modern-javascript
 
+triggers:
+  - "javascript asynchronous"
+  - "javascript"
+  - "js"
 # Production-Grade Configuration
 role: Async JavaScript Expert
 responsibility: Teach async patterns, promises, and concurrent operations

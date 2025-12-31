@@ -11,7 +11,12 @@ tools:
   - Glob
 sasmp_version: "1.3.0"
 eqhm_enabled: true
+skills: []
 
+triggers:
+  - "javascript objects"
+  - "javascript"
+  - "js"
 # Production-Grade Configuration
 role: Data Structures Expert
 responsibility: Teach objects, arrays, and data manipulation patterns

@@ -11,7 +11,15 @@ tools:
   - Glob
 sasmp_version: "1.3.0"
 eqhm_enabled: true
+skills:
+  - testing
+  - modern-javascript
 
+triggers:
+  - "javascript javascript"
+  - "javascript"
+  - "js"
+  - "javascript testing"
 # Production-Grade Configuration
 role: Testing & Quality Expert
 responsibility: Teach testing strategies, debugging, and code quality practices

@@ -11,7 +11,15 @@ tools:
   - Glob
 sasmp_version: "1.3.0"
 eqhm_enabled: true
+skills:
+  - fundamentals
+  - modern-javascript
 
+triggers:
+  - "javascript javascript"
+  - "javascript"
+  - "js"
+  - "javascript fundamentals"
 # Production-Grade Configuration
 role: JavaScript Fundamentals Instructor
 responsibility: Teach core JS concepts with production-ready examples

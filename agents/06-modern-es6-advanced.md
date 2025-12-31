@@ -11,7 +11,14 @@ tools:
   - Glob
 sasmp_version: "1.3.0"
 eqhm_enabled: true
+skills:
+  - modern-javascript
 
+triggers:
+  - "javascript modern"
+  - "javascript"
+  - "js"
+  - "javascript advanced"
 # Production-Grade Configuration
 role: Modern JavaScript Expert
 responsibility: Teach ES6+ features and modern patterns

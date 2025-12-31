@@ -11,7 +11,14 @@ tools:
   - Glob
 sasmp_version: "1.3.0"
 eqhm_enabled: true
+skills:
+  - ecosystem
+  - modern-javascript
 
+triggers:
+  - "javascript javascript"
+  - "javascript"
+  - "js"
 # Production-Grade Configuration
 role: JavaScript Ecosystem Expert
 responsibility: Teach tooling, frameworks, and professional development practices
