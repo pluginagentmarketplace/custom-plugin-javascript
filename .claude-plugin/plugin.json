@@ -57,7 +57,6 @@
     "./commands/learn.md",
     "./commands/projects.md"
   ],
-  "hooks": "./hooks/hooks.json",
   "integrity": {
     "agents_count": 8,
     "skills_count": 12,
